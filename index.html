@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI 协作系统地图</title>
+<style>
+:root{--bg:#faf9f5;--card:#fff;--soft:#f1efe8;--line:rgba(0,0,0,.1);--line2:rgba(0,0,0,.22);--tx:#1f1e1d;--tx2:#5f5e5a;--tx3:#8a8983;--ac:#185fa5;--acbg:rgba(55,138,221,.1);--wn:#854f0b;--wnbg:#faeeda;--ok:#3b6d11;--okbg:#eaf3de}
+@media (prefers-color-scheme:dark){:root{--bg:#1f1e1d;--card:#262624;--soft:#30302e;--line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.25);--tx:#ececea;--tx2:#b4b2a9;--tx3:#888780;--ac:#85b7eb;--acbg:rgba(55,138,221,.16);--wn:#fac775;--wnbg:#412402;--ok:#c0dd97;--okbg:#173404}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 48px}
+h1{font-size:22px;font-weight:500;margin:0}
+.meta{font-size:13px;color:var(--tx2);margin:6px 0 0}
+.badge{display:inline-block;font-size:12px;padding:2px 8px;border-radius:6px;margin-left:8px}
+.fresh{background:var(--okbg);color:var(--ok)}.stale{background:var(--wnbg);color:var(--wn)}
+details{margin-top:8px;font-size:13px;color:var(--tx2)}
+details a{color:var(--ac)}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0 14px}
+button{font:inherit;font-size:13px;color:var(--tx);background:transparent;border:.5px solid var(--line2);border-radius:8px;padding:6px 12px;cursor:pointer}
+button:hover{background:var(--soft)}
+button.on{background:var(--soft);border-color:var(--tx3)}
+.sep{width:1px;height:22px;background:var(--line);margin:0 4px}
+label.tg{font-size:13px;color:var(--tx2);display:flex;gap:6px;align-items:center;cursor:pointer;margin-left:auto}
+.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:1fr}}
+.row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;align-items:center;padding:12px 14px;background:var(--card);border:.5px solid var(--line);border-radius:10px;transition:opacity .2s,border-color .2s}
+.row.hi{border:1.5px solid var(--ac);background:var(--acbg)}
+.row.dim{opacity:.35}
+.ln{cursor:pointer}
+.ln b{display:block;font-size:15px;font-weight:500}
+.ln span{font-size:12px;color:var(--tx2)}
+.ln:hover b{color:var(--ac)}
+.link{height:18px;margin-left:60px;border-left:.5px dashed var(--line2)}
+.chip{font-size:12px;padding:4px 10px;margin:3px 6px 3px 0;position:relative}
+.chip.draft{border-style:dashed;color:var(--wn)}
+.chip.sel{background:var(--soft);border-color:var(--tx3)}
+.chip.glow{background:var(--wnbg);border-color:var(--wn)}
+.ln .num{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;font-size:11px;border-radius:9px;background:var(--ac);color:var(--card);margin:4px 4px 0 0}
+.panel{position:sticky;top:16px;background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 20px;min-height:200px}
+.crumb{font-size:12px;color:var(--tx3);margin:0 0 4px}
+.crumb a{color:var(--ac);cursor:pointer}
+.pt{font-size:18px;font-weight:500;margin:0 0 10px}
+.it{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:7px 0;border-bottom:.5px solid var(--line)}
+.it a{color:var(--tx);text-decoration:none}.it a:hover{color:var(--ac)}
+.it a::after{content:" ↗";color:var(--tx3);font-size:12px}
+.mod{cursor:pointer}.mod:hover{color:var(--ac)}
+.tag{font-size:11px;padding:1px 6px;border-radius:4px;white-space:nowrap;align-self:center;background:var(--soft);color:var(--tx2)}
+.tag.w{background:var(--wnbg);color:var(--wn)}
+.rel{font-size:13px;color:var(--tx2);margin:12px 0 0;padding:10px 12px;background:var(--soft);border-radius:8px;line-height:1.7}
+.step{display:flex;gap:10px;font-size:14px;padding:7px 8px;border-radius:8px;cursor:pointer;color:var(--tx2)}
+.step.cur{background:var(--acbg);color:var(--tx)}
+.step .ly{font-size:12px;color:var(--tx3);min-width:44px}
+.nav{display:flex;justify-content:space-between;margin-top:12px}
+.hint{font-size:12px;color:var(--tx3);margin:12px 0 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>AI 协作系统地图</h1>
+  <p class="meta" id="meta"></p>
+  <details><summary>数据来源</summary><div id="sources"></div></details>
+
+  <div class="bar" id="bar"></div>
+
+  <div class="grid">
+    <div id="layers"></div>
+    <div class="panel" id="panel"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+const M = window.SYSTEM_MAP;
+const STALE_DAYS = 7;
+const WARN_TAGS = ["草案", "待建", "待配置", "待核实"];
+let mode = null;      // null = 看结构；否则是 flow 下标
+let step = 0;
+let sel = null;       // {layer, module} 或 {layer}
+let showDraft = false;
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const layerById = id => M.layers.find(l => l.id === id);
+
+function renderMeta() {
+  const gen = new Date(M.meta.generated + "T00:00:00");
+  const days = Math.floor((Date.now() - gen) / 86400000);
+  const stale = days > STALE_DAYS;
+  $("meta").innerHTML = "生成于 " + esc(M.meta.generated) + "（" + (days <= 0 ? "今天" : days + " 天前") + "）" +
+    '<span class="badge ' + (stale ? "stale" : "fresh") + '">' + (stale ? "可能已过期，请说「更新系统地图」" : "较新") + "</span>";
+  $("sources").innerHTML = M.meta.sources.map(s =>
+    '<div><a href="' + esc(s.url) + '" target="_blank">' + esc(s.name) + "</a> · " + esc(s.version) + "</div>").join("");
+}
+
+function renderBar() {
+  const bar = $("bar");
+  bar.innerHTML = "";
+  const mk = (label, on, fn) => { const b = document.createElement("button"); b.textContent = label; if (on) b.className = "on"; b.onclick = fn; bar.appendChild(b); };
+  mk("看结构", mode === null, () => { mode = null; draw(); });
+  const sp = document.createElement("span"); sp.className = "sep"; bar.appendChild(sp);
+  M.flows.forEach((f, i) => mk(f.name, mode === i, () => { mode = i; step = 0; draw(); }));
+  const lb = document.createElement("label"); lb.className = "tg";
+  lb.innerHTML = '<input type="checkbox"' + (showDraft ? " checked" : "") + "> 突出正在改造的部分";
+  lb.querySelector("input").onchange = e => { showDraft = e.target.checked; draw(); };
+  bar.appendChild(lb);
+}
+
+function moduleHasDraft(m) {
+  return m.draft || m.items.some(it => WARN_TAGS.includes(it.tag));
+}
+
+function renderLayers() {
+  const box = $("layers");
+  box.innerHTML = "";
+  const flow = mode !== null ? M.flows[mode] : null;
+  const cur = flow ? flow.steps[step].layer : null;
+  M.layers.forEach((l, idx) => {
+    if (idx > 0) { const c = document.createElement("div"); c.className = "link"; box.appendChild(c); }
+    const r = document.createElement("div");
+    r.className = "row" + (cur ? (cur === l.id ? " hi" : " dim") : "");
+    let nums = "";
+    if (flow) flow.steps.forEach((s, k) => { if (s.layer === l.id) nums += '<span class="num">' + (k + 1) + "</span>"; });
+    r.innerHTML = '<div class="ln"><b>' + esc(l.name) + "</b><span>" + esc(l.sub) + "</span><div>" + nums + "</div></div>";
+    r.querySelector(".ln").onclick = () => { mode = null; sel = { layer: l.id }; draw(); };
+    const chips = document.createElement("div");
+    l.modules.forEach(m => {
+      const b = document.createElement("button");
+      let cls = "chip";
+      if (m.draft) cls += " draft";
+      if (showDraft && moduleHasDraft(m)) cls += " glow";
+      if (sel && sel.layer === l.id && sel.module === m.name) cls += " sel";
+      b.className = cls;
+      b.textContent = m.name;
+      b.onclick = () => { mode = null; sel = { layer: l.id, module: m.name }; draw(); };
+      chips.appendChild(b);
+    });
+    r.appendChild(chips);
+    box.appendChild(r);
+  });
+}
+
+function itemHtml(it) {
+  const t = it.url ? '<a href="' + esc(it.url) + '" target="_blank">' + esc(it.t) + "</a>" : "<span>" + esc(it.t) + "</span>";
+  const tag = it.tag ? '<span class="tag' + (WARN_TAGS.includes(it.tag) ? " w" : "") + '">' + esc(it.tag) + "</span>" : "";
+  return '<div class="it">' + t + tag + "</div>";
+}
+
+function renderPanel() {
+  const p = $("panel");
+  if (mode !== null) {
+    const f = M.flows[mode];
+    p.innerHTML = '<p class="crumb">运作路线</p><p class="pt">' + esc(f.name) + "</p>" +
+      f.steps.map((s, k) => '<div class="step' + (k === step ? " cur" : "") + '" data-k="' + k + '"><span class="ly">' +
+        esc(layerById(s.layer).name) + "</span><span>" + (k + 1) + ". " + esc(s.text) +
+        (s.tag ? ' <span class="tag w">' + esc(s.tag) + "</span>" : "") + "</span></div>").join("") +
+      '<div class="nav"><button id="pv">上一步</button><button id="nx">下一步</button></div>' +
+      '<p class="hint">左右方向键也可以切换步骤</p>';
+    p.querySelectorAll(".step").forEach(el => el.onclick = () => { step = +el.dataset.k; draw(); });
+    $("pv").onclick = () => go(-1);
+    $("nx").onclick = () => go(1);
+    return;
+  }
+  if (!sel) {
+    p.innerHTML = '<p class="pt">怎么看这张图</p>' +
+      '<div class="it"><span>点左边的层名，看这一层管什么、和上下层怎么配合</span></div>' +
+      '<div class="it"><span>点层里的模块，看具体内容；带 ↗ 的条目可以直接打开 Notion 正本</span></div>' +
+      '<div class="it"><span>点上方的路线按钮，看一件事怎么在各层之间流动</span></div>' +
+      '<div class="it"><span>虚线模块和黄色标签是草案、待建或待核实的部分</span></div>';
+    return;
+  }
+  const l = layerById(sel.layer);
+  if (!sel.module) {
+    let rel = "";
+    if (l.up) rel += "<div>往上：" + esc(l.up) + "</div>";
+    if (l.down) rel += "<div>往下：" + esc(l.down) + "</div>";
+    p.innerHTML = '<p class="crumb">层</p><p class="pt">' + esc(l.name) + " · " + esc(l.sub) + "</p>" +
+      '<p style="margin:0 0 8px;font-size:14px">' + esc(l.role) + "</p>" +
+      l.modules.map(m => '<div class="it"><span class="mod" data-m="' + esc(m.name) + '">' + esc(m.name) + " ›</span>" +
+        '<span class="tag' + (m.draft ? " w" : "") + '">' + m.items.length + " 项</span></div>").join("") +
+      (rel ? '<div class="rel">' + rel + "</div>" : "");
+    p.querySelectorAll(".mod").forEach(a => a.onclick = () => { sel = { layer: l.id, module: a.dataset.m }; draw(); });
+    return;
+  }
+  const m = l.modules.find(x => x.name === sel.module);
+  p.innerHTML = '<p class="crumb"><a id="up">' + esc(l.name) + "</a> / 模块</p>" +
+    '<p class="pt">' + esc(m.name) + (m.draft ? ' <span class="tag w">草案或待建</span>' : "") + "</p>" +
+    m.items.map(itemHtml).join("");
+  $("up").onclick = () => { sel = { layer: l.id }; draw(); };
+}
+
+function go(d) {
+  const n = M.flows[mode].steps.length;
+  step = (step + d + n) % n;
+  draw();
+}
+
+document.addEventListener("keydown", e => {
+  if (mode === null) return;
+  if (e.key === "ArrowRight") go(1);
+  if (e.key === "ArrowLeft") go(-1);
+});
+
+function draw() { renderBar(); renderLayers(); renderPanel(); }
+renderMeta();
+draw();
+</script>
+</body>
+</html>

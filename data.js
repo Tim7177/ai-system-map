@@ -1,7 +1,7 @@
 // 系统地图的数据。index.html 只负责展示，更新时只改这个文件。
 // 全部内容从 Notion 正本读出来，不在这里写任何决定；和 Notion 冲突时以 Notion 为准。
 // 来源见 meta.sources；重新生成时逐个回读，更新内容、版本号和 meta.generated。
-// 条目标签 tag 只用这几种：草案、待建、待配置、仅手动、停用、待核实。
+// 条目标签 tag 只用这几种：草案、待建、待配置、仅手动、Agent 专用、停用、待核实。
 
 window.SYSTEM_MAP = {
   meta: {
@@ -9,9 +9,9 @@ window.SYSTEM_MAP = {
     sources: [
       { name: "AI 协作系统总架构", version: "v5.0", url: "https://app.notion.com/c52789ea0fc24051ad9fbe89d333dad2" },
       { name: "Agent 操作指南", version: "0.0.6", url: "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a" },
-      { name: "工作方法规划｜草案", version: "v0.4", url: "https://app.notion.com/410c7394815f816ab2e6d470fc89e748" },
+      { name: "工作方法规划｜草案", version: "v0.6", url: "https://app.notion.com/410c7394815f816ab2e6d470fc89e748" },
       { name: "知识中心", version: "8 页", url: "https://app.notion.com/400c7394815f81d181eef3c3c4764461" },
-      { name: "技能库", version: "18 个技能", url: "https://app.notion.com/3fcc7394815f80198359d76a9252e114" }
+      { name: "技能库", version: "19 个技能", url: "https://app.notion.com/3fcc7394815f80198359d76a9252e114" }
     ]
   },
 
@@ -54,7 +54,7 @@ window.SYSTEM_MAP = {
         ] },
         { name: "定时与自动化", items: [
           { t: "Daily Notion memory and setup check：每天 20:58 同步记忆、检查指南版本" },
-          { t: "这个定时任务不在本机，具体在哪待确认", tag: "待核实" },
+          { t: "在云端执行，不在本机；以后加对账要按云端任务改" },
           { t: "方案回填（Notion 自定义 Agent）", tag: "待配置" }
         ] }
       ]
@@ -84,7 +84,7 @@ window.SYSTEM_MAP = {
           { t: "v5.0 · 生效 · 只给 Tim 看的设计记录，Agent 不读", url: "https://app.notion.com/c52789ea0fc24051ad9fbe89d333dad2" }
         ] },
         { name: "工作方法草案", draft: true, items: [
-          { t: "v0.4 · 草案 · 只当资料，Tim 说「试跑」才用", url: "https://app.notion.com/410c7394815f816ab2e6d470fc89e748", tag: "草案" },
+          { t: "v0.6 · 草案 · 只当资料，Tim 说「试跑」才用", url: "https://app.notion.com/410c7394815f816ab2e6d470fc89e748", tag: "草案" },
           { t: "第一期：先查后问、证据卡、二次犯错就升级" }
         ] },
         { name: "工作流入库规范", items: [
@@ -105,7 +105,8 @@ window.SYSTEM_MAP = {
           { t: "推进项目", url: "https://app.notion.com/9d6f37f700cb4dca867f3144e0370015" },
           { t: "游戏方案编译器", url: "https://app.notion.com/df88652d49e14ee4a78ab66e7bf39df3" },
           { t: "派发任务卡", url: "https://app.notion.com/3fcc7394815f813b855ec1c458769a89", tag: "仅手动" },
-          { t: "同步技能", url: "https://app.notion.com/40ec7394815f819486ece610963f061f", tag: "仅手动" }
+          { t: "同步技能", url: "https://app.notion.com/40ec7394815f819486ece610963f061f", tag: "仅手动" },
+          { t: "更新系统地图", url: "https://app.notion.com/410c7394815f81559af6dabee5034225", tag: "Agent 专用" }
         ] },
         { name: "文档输出", items: [
           { t: "起草汇报", url: "https://app.notion.com/317c7394815f8051bf90e7f7c51ff51c" },

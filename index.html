@@ -4,69 +4,186 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI 协作系统地图</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#faf9f5;--card:#fff;--soft:#f1efe8;--line:rgba(0,0,0,.1);--line2:rgba(0,0,0,.22);--tx:#1f1e1d;--tx2:#5f5e5a;--tx3:#8a8983;--ac:#185fa5;--acbg:rgba(55,138,221,.1);--wn:#854f0b;--wnbg:#faeeda;--ok:#3b6d11;--okbg:#eaf3de}
-@media (prefers-color-scheme:dark){:root{--bg:#1f1e1d;--card:#262624;--soft:#30302e;--line:rgba(255,255,255,.1);--line2:rgba(255,255,255,.25);--tx:#ececea;--tx2:#b4b2a9;--tx3:#888780;--ac:#85b7eb;--acbg:rgba(55,138,221,.16);--wn:#fac775;--wnbg:#412402;--ok:#c0dd97;--okbg:#173404}}
+:root{
+  --bg:#04070c;--deck:rgba(10,20,30,.72);--deck2:rgba(14,30,44,.9);
+  --line:rgba(110,220,255,.16);--line2:rgba(110,220,255,.38);
+  --cy:#5ce1ff;--cy-dim:#2a9fc0;--am:#ffb547;--am-dim:rgba(255,181,71,.14);
+  --tx:#dbe8f0;--tx2:#8ea3b3;--tx3:#7a90a1;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --disp:"Chakra Petch","PingFang SC","Hiragino Sans GB",sans-serif;
+  --body:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 -apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif}
-.wrap{max-width:1180px;margin:0 auto;padding:28px 24px 48px}
-h1{font-size:22px;font-weight:500;margin:0}
-.meta{font-size:13px;color:var(--tx2);margin:6px 0 0}
-.badge{display:inline-block;font-size:12px;padding:2px 8px;border-radius:6px;margin-left:8px}
-.fresh{background:var(--okbg);color:var(--ok)}.stale{background:var(--wnbg);color:var(--wn)}
-details{margin-top:8px;font-size:13px;color:var(--tx2)}
-details a{color:var(--ac)}
-.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:20px 0 14px}
-button{font:inherit;font-size:13px;color:var(--tx);background:transparent;border:.5px solid var(--line2);border-radius:8px;padding:6px 12px;cursor:pointer}
-button:hover{background:var(--soft)}
-button.on{background:var(--soft);border-color:var(--tx3)}
-.sep{width:1px;height:22px;background:var(--line);margin:0 4px}
-label.tg{font-size:13px;color:var(--tx2);display:flex;gap:6px;align-items:center;cursor:pointer;margin-left:auto}
-.grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:20px;align-items:start}
-@media (max-width:900px){.grid{grid-template-columns:1fr}}
-.row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:12px;align-items:center;padding:12px 14px;background:var(--card);border:.5px solid var(--line);border-radius:10px;transition:opacity .2s,border-color .2s}
-.row.hi{border:1.5px solid var(--ac);background:var(--acbg)}
-.row.dim{opacity:.35}
-.ln{cursor:pointer}
-.ln b{display:block;font-size:15px;font-weight:500}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--tx);font:15px/1.65 var(--body)}
+a{color:inherit}
+
+/* ---------- 背景：星点 + 透视网格 + 扫描线 ---------- */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg::before{content:"";position:absolute;inset:-20%;background:
+  radial-gradient(ellipse 60% 45% at 70% 10%,rgba(92,225,255,.13),transparent 70%),
+  radial-gradient(ellipse 50% 40% at 10% 90%,rgba(255,181,71,.07),transparent 70%)}
+.grid{position:absolute;left:-50%;right:-50%;bottom:-10%;height:62%;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:60px 60px;transform:perspective(520px) rotateX(62deg);transform-origin:bottom;
+  mask-image:linear-gradient(to top,rgba(0,0,0,.9),transparent 85%);animation:gridmove 6s linear infinite}
+@keyframes gridmove{to{background-position:0 60px}}
+.scan{position:absolute;inset:0;background:repeating-linear-gradient(to bottom,rgba(255,255,255,.018) 0 1px,transparent 1px 3px)}
+#stars{position:absolute;inset:0;width:100%;height:100%}
+
+.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:30px 28px 60px}
+
+/* ---------- 顶栏 ---------- */
+.top{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
+.eyebrow{font:600 11px/1 var(--mono);letter-spacing:.32em;color:var(--cy);opacity:.85}
+.eyebrow i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--cy);margin-right:8px;box-shadow:0 0 10px var(--cy);animation:blink 1.6s ease-in-out infinite;vertical-align:1px}
+@keyframes blink{50%{opacity:.25}}
+h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em;
+  background:linear-gradient(100deg,#fff 0%,var(--cy) 55%,#fff 100%);background-size:200% 100%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 7s ease-in-out infinite}
+@keyframes sheen{50%{background-position:100% 0}}
+.meta{font:12px/1.6 var(--mono);color:var(--tx2)}
+.badge{display:inline-block;margin-left:10px;padding:2px 8px;border:1px solid currentColor;border-radius:3px;font-size:11px;letter-spacing:.08em}
+.fresh{color:#6dffb0}.stale{color:var(--am)}
+.stats{display:flex;gap:10px}
+.stat{min-width:92px;padding:10px 14px;border:1px solid var(--line);background:var(--deck);position:relative;clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+.stat b{display:block;font:600 24px/1.1 var(--mono);color:var(--cy)}
+.stat span{font:11px/1 var(--mono);color:var(--tx3);letter-spacing:.12em}
+.stat.am b{color:var(--am)}
+
+/* ---------- 模式条 ---------- */
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 18px;padding:10px;border:1px solid var(--line);background:rgba(6,12,20,.6);backdrop-filter:blur(6px)}
+.btn{font:13px/1 var(--body);color:var(--tx2);background:transparent;border:1px solid transparent;padding:9px 14px;cursor:pointer;position:relative;transition:color .2s,border-color .2s,background .2s}
+.btn:hover{color:var(--tx);border-color:var(--line2)}
+.btn.on{color:var(--bg);background:var(--cy);border-color:var(--cy);box-shadow:0 0 18px rgba(92,225,255,.45)}
+.btn:focus-visible,.chip:focus-visible,.ln:focus-visible,.it-btn:focus-visible{outline:2px solid var(--cy);outline-offset:2px}
+.sep{width:1px;height:22px;background:var(--line2);margin:0 6px}
+.tgl{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx2);cursor:pointer;user-select:none}
+.tgl input{appearance:none;width:34px;height:18px;border:1px solid var(--line2);border-radius:9px;position:relative;cursor:pointer;transition:background .2s}
+.tgl input::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--tx2);transition:transform .2s,background .2s}
+.tgl input:checked{background:var(--am-dim);border-color:var(--am)}
+.tgl input:checked::after{transform:translateX(16px);background:var(--am);box-shadow:0 0 8px var(--am)}
+
+/* ---------- 主体 ---------- */
+.main{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:920px){.main{grid-template-columns:1fr}}
+.stack{position:relative;padding-left:34px}
+.spine{position:absolute;left:12px;top:24px;bottom:24px;width:2px;background:linear-gradient(var(--line2),var(--line2)) center/1px 100% no-repeat;overflow:hidden}
+.spine::after{content:"";position:absolute;left:0;width:2px;height:70px;background:linear-gradient(transparent,var(--cy),transparent);animation:pulse 2.8s linear infinite}
+@keyframes pulse{from{top:-70px}to{top:100%}}
+.probe{position:absolute;left:6px;width:14px;height:14px;border-radius:50%;background:var(--cy);box-shadow:0 0 0 4px rgba(92,225,255,.2),0 0 22px var(--cy);transition:top .6s cubic-bezier(.6,0,.2,1),opacity .3s;opacity:0;z-index:2}
+.probe.on{opacity:1}
+
+.deck{position:relative;display:grid;grid-template-columns:132px minmax(0,1fr);gap:14px;align-items:center;margin-bottom:14px;padding:16px 18px;
+  background:var(--deck);border:1px solid var(--line);backdrop-filter:blur(8px);
+  clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));
+  transition:border-color .3s,background .3s,opacity .35s,transform .35s;
+  opacity:0;transform:translateX(-18px);animation:deckin .7s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes deckin{to{opacity:1;transform:none}}
+.deck::before{content:"";position:absolute;left:-23px;top:50%;width:22px;height:1px;background:var(--line2)}
+.deck::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(92,225,255,.07) 50%,transparent 60%);background-size:250% 100%;background-position:120% 0;transition:background-position .9s}
+.deck:hover::after{background-position:-20% 0}
+.deck.hi{border-color:var(--cy);background:var(--deck2);box-shadow:inset 0 0 40px rgba(92,225,255,.12)}
+.deck.dim{opacity:.32!important}
+.idx{font:600 11px/1 var(--mono);color:var(--cy);letter-spacing:.18em;margin-bottom:6px}
+.ln{background:none;border:0;padding:0;text-align:left;color:inherit;cursor:pointer;font:inherit}
+.ln b{display:block;font:600 18px/1.25 var(--disp);color:var(--tx);transition:color .2s}
 .ln span{font-size:12px;color:var(--tx2)}
-.ln:hover b{color:var(--ac)}
-.link{height:18px;margin-left:60px;border-left:.5px dashed var(--line2)}
-.chip{font-size:12px;padding:4px 10px;margin:3px 6px 3px 0;position:relative}
-.chip.draft{border-style:dashed;color:var(--wn)}
-.chip.sel{background:var(--soft);border-color:var(--tx3)}
-.chip.glow{background:var(--wnbg);border-color:var(--wn)}
-.ln .num{display:inline-block;min-width:18px;height:18px;line-height:18px;text-align:center;font-size:11px;border-radius:9px;background:var(--ac);color:var(--card);margin:4px 4px 0 0}
-.panel{position:sticky;top:16px;background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 20px;min-height:200px}
-.crumb{font-size:12px;color:var(--tx3);margin:0 0 4px}
-.crumb a{color:var(--ac);cursor:pointer}
-.pt{font-size:18px;font-weight:500;margin:0 0 10px}
-.it{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:7px 0;border-bottom:.5px solid var(--line)}
-.it a{color:var(--tx);text-decoration:none}.it a:hover{color:var(--ac)}
-.it a::after{content:" ↗";color:var(--tx3);font-size:12px}
-.mod{cursor:pointer}.mod:hover{color:var(--ac)}
-.tag{font-size:11px;padding:1px 6px;border-radius:4px;white-space:nowrap;align-self:center;background:var(--soft);color:var(--tx2)}
-.tag.w{background:var(--wnbg);color:var(--wn)}
-.rel{font-size:13px;color:var(--tx2);margin:12px 0 0;padding:10px 12px;background:var(--soft);border-radius:8px;line-height:1.7}
-.step{display:flex;gap:10px;font-size:14px;padding:7px 8px;border-radius:8px;cursor:pointer;color:var(--tx2)}
-.step.cur{background:var(--acbg);color:var(--tx)}
-.step .ly{font-size:12px;color:var(--tx3);min-width:44px}
-.nav{display:flex;justify-content:space-between;margin-top:12px}
-.hint{font-size:12px;color:var(--tx3);margin:12px 0 0}
+.ln:hover b{color:var(--cy)}
+.nums{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
+.num{font:600 11px/18px var(--mono);min-width:20px;text-align:center;border:1px solid var(--cy-dim);color:var(--cy)}
+.num.cur{background:var(--cy);color:var(--bg);box-shadow:0 0 10px var(--cy)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:13px/1 var(--body);color:var(--tx);background:rgba(92,225,255,.04);border:1px solid var(--line2);padding:8px 12px;cursor:pointer;position:relative;transition:all .2s;
+  opacity:0;animation:chipin .45s ease-out forwards}
+@keyframes chipin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.chip:hover{border-color:var(--cy);color:#fff;background:rgba(92,225,255,.1);box-shadow:0 0 14px rgba(92,225,255,.25)}
+.chip.sel{background:var(--cy);color:var(--bg);border-color:var(--cy)}
+.chip.draft{border-style:dashed;border-color:rgba(255,181,71,.6);color:var(--am);background:transparent}
+.chip.draft::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--am);margin-right:7px;vertical-align:2px;animation:blink 1.4s infinite}
+.chip.glow{background:var(--am-dim);border-color:var(--am);color:var(--am);box-shadow:0 0 16px rgba(255,181,71,.35)}
+.chip.draft.sel{background:var(--am);color:var(--bg)}
+
+/* ---------- 右侧面板 ---------- */
+.panel{position:sticky;top:18px;min-height:260px;padding:20px 22px 22px;background:rgba(8,16,26,.82);border:1px solid var(--line2);backdrop-filter:blur(10px);
+  clip-path:polygon(0 0,calc(100% - 20px) 0,100% 20px,100% 100%,0 100%)}
+.panel::before{content:"";position:absolute;left:0;top:0;width:60px;height:2px;background:var(--cy);box-shadow:0 0 12px var(--cy)}
+.crumb{font:11px/1 var(--mono);letter-spacing:.2em;color:var(--tx3);margin:0 0 10px}
+.crumb button{background:none;border:0;padding:0;font:inherit;letter-spacing:inherit;color:var(--cy);cursor:pointer}
+.pt{font:600 22px/1.3 var(--disp);margin:0 0 12px}
+.role{font-size:14px;color:var(--tx2);margin:0 0 14px}
+.it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;opacity:0;animation:chipin .35s ease-out forwards}
+.it a{text-decoration:none;transition:color .2s}
+.it a:hover{color:var(--cy)}
+.it a::after{content:"↗";margin-left:6px;font:12px var(--mono);color:var(--tx3)}
+.it-btn{background:none;border:0;padding:0;color:var(--tx);font:inherit;cursor:pointer;text-align:left}
+.it-btn:hover{color:var(--cy)}
+.tag{font:11px/1 var(--mono);padding:3px 7px;border:1px solid var(--line2);color:var(--tx2);white-space:nowrap}
+.tag.w{border-color:var(--am);color:var(--am)}
+.rel{margin-top:16px;padding:12px 14px;border-left:2px solid var(--cy);background:rgba(92,225,255,.05);font-size:13px;color:var(--tx2);line-height:1.8}
+.rel b{font:600 11px var(--mono);color:var(--cy);letter-spacing:.15em;margin-right:8px}
+.step{display:flex;gap:12px;padding:9px 10px;margin:0 -10px;cursor:pointer;font-size:14px;color:var(--tx3);transition:color .25s,background .25s;border-left:2px solid transparent}
+.step:hover{color:var(--tx2)}
+.step.done{color:var(--tx2)}
+.step.cur{color:var(--tx);background:rgba(92,225,255,.08);border-left-color:var(--cy)}
+.step .ly{font:11px/22px var(--mono);color:var(--cy-dim);min-width:52px;letter-spacing:.06em}
+.step.cur .ly{color:var(--cy)}
+.nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+.nav .btn{border-color:var(--line2);color:var(--tx)}
+.hint{font:11px var(--mono);color:var(--tx3);letter-spacing:.08em}
+.prog{height:2px;background:var(--line);margin:4px 0 14px;position:relative}
+.prog i{position:absolute;left:0;top:0;bottom:0;background:var(--cy);box-shadow:0 0 8px var(--cy);transition:width .5s}
+details{margin-top:8px;font:12px var(--mono);color:var(--tx3)}
+details summary{cursor:pointer}
+details a{color:var(--cy);text-decoration:none}
+.legend{display:flex;gap:16px;margin-top:22px;font:11px var(--mono);color:var(--tx3);letter-spacing:.08em}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line2)}
+.legend .d::before{border:1px dashed var(--am)}
+.legend .h::before{background:var(--cy);border-color:var(--cy)}
+
+@media (max-width:640px){
+  .wrap{padding:22px 16px 40px}
+  h1{font-size:28px}
+  .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
+  .deck{grid-template-columns:1fr;gap:10px}
+  .tgl{margin-left:0}
+  .stack{padding-left:28px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .deck,.chip,.it{opacity:1!important;transform:none!important}
+}
 </style>
 </head>
 <body>
+<div class="bg" aria-hidden="true"><canvas id="stars"></canvas><div class="grid"></div><div class="scan"></div></div>
+
 <div class="wrap">
-  <h1>AI 协作系统地图</h1>
-  <p class="meta" id="meta"></p>
-  <details><summary>数据来源</summary><div id="sources"></div></details>
+  <header class="top">
+    <div>
+      <div class="eyebrow"><i></i>SYSTEM MAP · ONLINE</div>
+      <h1>AI 协作系统地图</h1>
+      <div class="meta" id="meta"></div>
+      <details><summary>数据来源</summary><div id="sources"></div></details>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
 
-  <div class="bar" id="bar"></div>
+  <nav class="bar" id="bar" aria-label="视图切换"></nav>
 
-  <div class="grid">
-    <div id="layers"></div>
-    <div class="panel" id="panel"></div>
+  <div class="main">
+    <div class="stack" id="stack">
+      <div class="spine" aria-hidden="true"></div>
+      <div class="probe" id="probe" aria-hidden="true"></div>
+      <div id="layers"></div>
+    </div>
+    <aside class="panel" id="panel" aria-live="polite"></aside>
   </div>
+
+  <div class="legend"><span class="h">当前所在层</span><span class="d">草案、待建、待配置或待核实</span><span>点 ↗ 打开 Notion 正本</span></div>
 </div>
 
 <script src="data.js"></script>
@@ -74,136 +191,166 @@ label.tg{font-size:13px;color:var(--tx2);display:flex;gap:6px;align-items:center
 const M = window.SYSTEM_MAP;
 const STALE_DAYS = 7;
 const WARN_TAGS = ["草案", "待建", "待配置", "待核实"];
-let mode = null;      // null = 看结构；否则是 flow 下标
-let step = 0;
-let sel = null;       // {layer, module} 或 {layer}
-let showDraft = false;
+const REDUCED = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let mode = null, step = 0, sel = null, showDraft = false, firstPaint = true;
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const layerById = id => M.layers.find(l => l.id === id);
+const isWarn = m => m.draft || m.items.some(it => WARN_TAGS.includes(it.tag));
 
-function renderMeta() {
-  const gen = new Date(M.meta.generated + "T00:00:00");
-  const days = Math.floor((Date.now() - gen) / 86400000);
+/* ---------- 顶部：生成时间、来源、统计 ---------- */
+function renderHeader() {
+  const days = Math.floor((Date.now() - new Date(M.meta.generated + "T00:00:00")) / 86400000);
   const stale = days > STALE_DAYS;
-  $("meta").innerHTML = "生成于 " + esc(M.meta.generated) + "（" + (days <= 0 ? "今天" : days + " 天前") + "）" +
-    '<span class="badge ' + (stale ? "stale" : "fresh") + '">' + (stale ? "可能已过期，请说「更新系统地图」" : "较新") + "</span>";
-  $("sources").innerHTML = M.meta.sources.map(s =>
-    '<div><a href="' + esc(s.url) + '" target="_blank">' + esc(s.name) + "</a> · " + esc(s.version) + "</div>").join("");
+  $("meta").innerHTML = "GENERATED " + esc(M.meta.generated) + " · " + (days <= 0 ? "今天" : days + " 天前") +
+    '<span class="badge ' + (stale ? "stale" : "fresh") + '">' + (stale ? "可能过期 · 说「更新系统地图」" : "SYNCED") + "</span>";
+  $("sources").innerHTML = M.meta.sources.map(s => '<div><a href="' + esc(s.url) + '" target="_blank" rel="noopener">' + esc(s.name) + "</a> · " + esc(s.version) + "</div>").join("");
+  const mods = M.layers.reduce((n, l) => n + l.modules.length, 0);
+  const items = M.layers.reduce((n, l) => n + l.modules.reduce((k, m) => k + m.items.length, 0), 0);
+  const warn = M.layers.reduce((n, l) => n + l.modules.filter(isWarn).length, 0);
+  const cells = [["LAYERS", M.layers.length, ""], ["MODULES", mods, ""], ["ITEMS", items, ""], ["IN PROGRESS", warn, "am"]];
+  $("stats").innerHTML = cells.map(c => '<div class="stat ' + c[2] + '"><b data-to="' + c[1] + '">0</b><span>' + c[0] + "</span></div>").join("");
+  document.querySelectorAll(".stat b").forEach(b => countUp(b, +b.dataset.to));
+}
+function countUp(el, to) {
+  if (REDUCED) { el.textContent = to; return; }
+  const t0 = performance.now(), dur = 1100;
+  const tick = t => { const p = Math.min(1, (t - t0) / dur); el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))); if (p < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
 }
 
+/* ---------- 模式条 ---------- */
 function renderBar() {
-  const bar = $("bar");
-  bar.innerHTML = "";
-  const mk = (label, on, fn) => { const b = document.createElement("button"); b.textContent = label; if (on) b.className = "on"; b.onclick = fn; bar.appendChild(b); };
+  const bar = $("bar"); bar.innerHTML = "";
+  const mk = (label, on, fn) => { const b = document.createElement("button"); b.className = "btn" + (on ? " on" : ""); b.textContent = label; b.onclick = fn; bar.appendChild(b); };
   mk("看结构", mode === null, () => { mode = null; draw(); });
   const sp = document.createElement("span"); sp.className = "sep"; bar.appendChild(sp);
-  M.flows.forEach((f, i) => mk(f.name, mode === i, () => { mode = i; step = 0; draw(); }));
-  const lb = document.createElement("label"); lb.className = "tg";
-  lb.innerHTML = '<input type="checkbox"' + (showDraft ? " checked" : "") + "> 突出正在改造的部分";
+  M.flows.forEach((f, i) => mk(f.name, mode === i, () => { mode = i; step = 0; sel = null; draw(); }));
+  const lb = document.createElement("label"); lb.className = "tgl";
+  lb.innerHTML = '<input type="checkbox"' + (showDraft ? " checked" : "") + ' aria-label="突出正在改造的部分"> 突出正在改造的部分';
   lb.querySelector("input").onchange = e => { showDraft = e.target.checked; draw(); };
   bar.appendChild(lb);
 }
 
-function moduleHasDraft(m) {
-  return m.draft || m.items.some(it => WARN_TAGS.includes(it.tag));
-}
-
+/* ---------- 五层 ---------- */
 function renderLayers() {
-  const box = $("layers");
-  box.innerHTML = "";
+  const box = $("layers"); box.innerHTML = "";
   const flow = mode !== null ? M.flows[mode] : null;
   const cur = flow ? flow.steps[step].layer : null;
-  M.layers.forEach((l, idx) => {
-    if (idx > 0) { const c = document.createElement("div"); c.className = "link"; box.appendChild(c); }
-    const r = document.createElement("div");
-    r.className = "row" + (cur ? (cur === l.id ? " hi" : " dim") : "");
+  M.layers.forEach((l, i) => {
+    const d = document.createElement("section");
+    d.className = "deck" + (cur ? (cur === l.id ? " hi" : " dim") : "");
+    d.dataset.layer = l.id;
+    if (firstPaint) d.style.animationDelay = (i * 0.12) + "s"; else { d.style.animation = "none"; d.style.opacity = cur && cur !== l.id ? "" : 1; d.style.transform = "none"; }
     let nums = "";
-    if (flow) flow.steps.forEach((s, k) => { if (s.layer === l.id) nums += '<span class="num">' + (k + 1) + "</span>"; });
-    r.innerHTML = '<div class="ln"><b>' + esc(l.name) + "</b><span>" + esc(l.sub) + "</span><div>" + nums + "</div></div>";
-    r.querySelector(".ln").onclick = () => { mode = null; sel = { layer: l.id }; draw(); };
-    const chips = document.createElement("div");
-    l.modules.forEach(m => {
+    if (flow) flow.steps.forEach((s, k) => { if (s.layer === l.id) nums += '<span class="num' + (k === step ? " cur" : "") + '">' + (k + 1) + "</span>"; });
+    d.innerHTML = '<div><div class="idx">L' + (i + 1) + " / " + String(M.layers.length).padStart(2, "0") + '</div><button class="ln"><b>' + esc(l.name) + "</b><span>" + esc(l.sub) + '</span></button><div class="nums">' + nums + '</div></div><div class="chips"></div>';
+    d.querySelector(".ln").onclick = () => { mode = null; sel = { layer: l.id }; draw(); };
+    const chips = d.querySelector(".chips");
+    l.modules.forEach((m, j) => {
       const b = document.createElement("button");
       let cls = "chip";
       if (m.draft) cls += " draft";
-      if (showDraft && moduleHasDraft(m)) cls += " glow";
+      if (showDraft && isWarn(m)) cls += " glow";
       if (sel && sel.layer === l.id && sel.module === m.name) cls += " sel";
-      b.className = cls;
-      b.textContent = m.name;
+      b.className = cls; b.textContent = m.name;
+      if (firstPaint) b.style.animationDelay = (0.35 + i * 0.12 + j * 0.05) + "s"; else { b.style.animation = "none"; b.style.opacity = 1; }
       b.onclick = () => { mode = null; sel = { layer: l.id, module: m.name }; draw(); };
       chips.appendChild(b);
     });
-    r.appendChild(chips);
-    box.appendChild(r);
+    box.appendChild(d);
   });
+  placeProbe(cur);
+}
+function placeProbe(cur) {
+  const p = $("probe");
+  if (!cur) { p.classList.remove("on"); return; }
+  const deck = document.querySelector('.deck[data-layer="' + cur + '"]');
+  p.style.top = (deck.offsetTop + deck.offsetHeight / 2 - 7) + "px";
+  p.classList.add("on");
 }
 
+/* ---------- 右侧面板 ---------- */
+function itemsHtml(list) {
+  return list.map((h, k) => h.replace('class="it"', 'class="it" style="animation-delay:' + (k * 0.05) + 's"')).join("");
+}
 function itemHtml(it) {
-  const t = it.url ? '<a href="' + esc(it.url) + '" target="_blank">' + esc(it.t) + "</a>" : "<span>" + esc(it.t) + "</span>";
+  const t = it.url ? '<a href="' + esc(it.url) + '" target="_blank" rel="noopener">' + esc(it.t) + "</a>" : "<span>" + esc(it.t) + "</span>";
   const tag = it.tag ? '<span class="tag' + (WARN_TAGS.includes(it.tag) ? " w" : "") + '">' + esc(it.tag) + "</span>" : "";
   return '<div class="it">' + t + tag + "</div>";
 }
-
 function renderPanel() {
   const p = $("panel");
   if (mode !== null) {
-    const f = M.flows[mode];
-    p.innerHTML = '<p class="crumb">运作路线</p><p class="pt">' + esc(f.name) + "</p>" +
-      f.steps.map((s, k) => '<div class="step' + (k === step ? " cur" : "") + '" data-k="' + k + '"><span class="ly">' +
-        esc(layerById(s.layer).name) + "</span><span>" + (k + 1) + ". " + esc(s.text) +
-        (s.tag ? ' <span class="tag w">' + esc(s.tag) + "</span>" : "") + "</span></div>").join("") +
-      '<div class="nav"><button id="pv">上一步</button><button id="nx">下一步</button></div>' +
-      '<p class="hint">左右方向键也可以切换步骤</p>';
+    const f = M.flows[mode], n = f.steps.length;
+    p.innerHTML = '<p class="crumb">ROUTE · ' + String(mode + 1).padStart(2, "0") + '</p><p class="pt">' + esc(f.name) + "</p>" +
+      '<div class="prog"><i style="width:' + ((step + 1) / n * 100) + '%"></i></div>' +
+      f.steps.map((s, k) => '<div class="step' + (k === step ? " cur" : k < step ? " done" : "") + '" data-k="' + k + '"><span class="ly">' +
+        esc(layerById(s.layer).name) + "</span><span>" + (k + 1) + ". " + esc(s.text) + (s.tag ? ' <span class="tag w">' + esc(s.tag) + "</span>" : "") + "</span></div>").join("") +
+      '<div class="nav"><button class="btn" id="pv">← 上一步</button><span class="hint">' + (step + 1) + " / " + n + '</span><button class="btn" id="nx">下一步 →</button></div>';
     p.querySelectorAll(".step").forEach(el => el.onclick = () => { step = +el.dataset.k; draw(); });
-    $("pv").onclick = () => go(-1);
-    $("nx").onclick = () => go(1);
+    $("pv").onclick = () => go(-1); $("nx").onclick = () => go(1);
     return;
   }
   if (!sel) {
-    p.innerHTML = '<p class="pt">怎么看这张图</p>' +
-      '<div class="it"><span>点左边的层名，看这一层管什么、和上下层怎么配合</span></div>' +
-      '<div class="it"><span>点层里的模块，看具体内容；带 ↗ 的条目可以直接打开 Notion 正本</span></div>' +
-      '<div class="it"><span>点上方的路线按钮，看一件事怎么在各层之间流动</span></div>' +
-      '<div class="it"><span>虚线模块和黄色标签是草案、待建或待核实的部分</span></div>';
+    p.innerHTML = '<p class="crumb">GUIDE</p><p class="pt">怎么看这张图</p>' + itemsHtml([
+      '<div class="it"><span>点左边的层名，看这一层管什么、和上下层怎么配合</span></div>',
+      '<div class="it"><span>点层里的模块，看具体内容；带 ↗ 的条目直接打开 Notion 正本</span></div>',
+      '<div class="it"><span>点上方的路线，看一件事怎么在各层之间流动；左右方向键切换步骤</span></div>',
+      '<div class="it"><span>琥珀色虚线是草案、待建、待配置或待核实的部分</span></div>']);
     return;
   }
-  const l = layerById(sel.layer);
+  const l = layerById(sel.layer), li = M.layers.indexOf(l) + 1;
   if (!sel.module) {
     let rel = "";
-    if (l.up) rel += "<div>往上：" + esc(l.up) + "</div>";
-    if (l.down) rel += "<div>往下：" + esc(l.down) + "</div>";
-    p.innerHTML = '<p class="crumb">层</p><p class="pt">' + esc(l.name) + " · " + esc(l.sub) + "</p>" +
-      '<p style="margin:0 0 8px;font-size:14px">' + esc(l.role) + "</p>" +
-      l.modules.map(m => '<div class="it"><span class="mod" data-m="' + esc(m.name) + '">' + esc(m.name) + " ›</span>" +
-        '<span class="tag' + (m.draft ? " w" : "") + '">' + m.items.length + " 项</span></div>").join("") +
+    if (l.up) rel += "<div><b>UP</b>" + esc(l.up) + "</div>";
+    if (l.down) rel += "<div><b>DOWN</b>" + esc(l.down) + "</div>";
+    p.innerHTML = '<p class="crumb">LAYER L' + li + '</p><p class="pt">' + esc(l.name) + " · " + esc(l.sub) + '</p><p class="role">' + esc(l.role) + "</p>" +
+      itemsHtml(l.modules.map(m => '<div class="it"><button class="it-btn" data-m="' + esc(m.name) + '">' + esc(m.name) + ' ›</button><span class="tag' + (isWarn(m) ? " w" : "") + '">' + m.items.length + " 项</span></div>")) +
       (rel ? '<div class="rel">' + rel + "</div>" : "");
-    p.querySelectorAll(".mod").forEach(a => a.onclick = () => { sel = { layer: l.id, module: a.dataset.m }; draw(); });
+    p.querySelectorAll(".it-btn").forEach(b => b.onclick = () => { sel = { layer: l.id, module: b.dataset.m }; draw(); });
     return;
   }
   const m = l.modules.find(x => x.name === sel.module);
-  p.innerHTML = '<p class="crumb"><a id="up">' + esc(l.name) + "</a> / 模块</p>" +
-    '<p class="pt">' + esc(m.name) + (m.draft ? ' <span class="tag w">草案或待建</span>' : "") + "</p>" +
-    m.items.map(itemHtml).join("");
+  p.innerHTML = '<p class="crumb"><button id="up">LAYER L' + li + " · " + esc(l.name) + "</button> / MODULE</p>" +
+    '<p class="pt">' + esc(m.name) + (m.draft ? ' <span class="tag w">草案或待建</span>' : "") + "</p>" + itemsHtml(m.items.map(itemHtml));
   $("up").onclick = () => { sel = { layer: l.id }; draw(); };
 }
 
-function go(d) {
-  const n = M.flows[mode].steps.length;
-  step = (step + d + n) % n;
-  draw();
-}
-
+function go(d) { const n = M.flows[mode].steps.length; step = (step + d + n) % n; draw(); }
 document.addEventListener("keydown", e => {
   if (mode === null) return;
   if (e.key === "ArrowRight") go(1);
   if (e.key === "ArrowLeft") go(-1);
 });
+window.addEventListener("resize", () => placeProbe(mode !== null ? M.flows[mode].steps[step].layer : null));
 
-function draw() { renderBar(); renderLayers(); renderPanel(); }
-renderMeta();
+function draw() { renderBar(); renderLayers(); renderPanel(); firstPaint = false; }
+
+/* ---------- 星点背景 ---------- */
+function stars() {
+  const c = $("stars"), x = c.getContext("2d");
+  let w, h, pts;
+  const init = () => {
+    w = c.width = innerWidth * devicePixelRatio; h = c.height = innerHeight * devicePixelRatio;
+    pts = Array.from({ length: 90 }, () => ({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.4 + .3, v: Math.random() * .25 + .05, a: Math.random() }));
+  };
+  const frame = () => {
+    x.clearRect(0, 0, w, h);
+    pts.forEach(p => {
+      p.y -= p.v * devicePixelRatio; if (p.y < 0) { p.y = h; p.x = Math.random() * w; }
+      p.a += .02; x.globalAlpha = .35 + Math.sin(p.a) * .3;
+      x.fillStyle = "#9feaff"; x.beginPath(); x.arc(p.x, p.y, p.r * devicePixelRatio, 0, 7); x.fill();
+    });
+    if (!REDUCED) requestAnimationFrame(frame);
+  };
+  init(); frame(); addEventListener("resize", init);
+}
+
+renderHeader();
 draw();
+stars();
 </script>
 </body>
 </html>

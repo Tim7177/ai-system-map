@@ -7,9 +7,15 @@
 <script>
 // 尽早定主题，避免先闪一下另一套配色
 (function () {
+  // 新增风格：在这里加一行，再补一组 [data-theme="id"] 样式和下方 T 里的文案
+  window.THEMES = [
+    { id: "tech", name: "科技", note: "全息指挥台" },
+    { id: "ink", name: "水墨", note: "水墨剪纸" }
+  ];
+  var ok = function (x) { return window.THEMES.some(function (s) { return s.id === x; }); };
   var q = new URLSearchParams(location.search).get("theme");
-  var t = q || localStorage.getItem("sysmap-theme") || "tech";
-  document.documentElement.dataset.theme = t === "ink" ? "ink" : "tech";
+  var saved = null; try { saved = localStorage.getItem("sysmap-theme"); } catch (e) {}
+  document.documentElement.dataset.theme = ok(q) ? q : ok(saved) ? saved : "tech";
 })();
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -95,9 +101,21 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 .badge{display:inline-block;margin-left:10px;padding:2px 8px;border:1px solid currentColor;border-radius:3px;font-size:11px;letter-spacing:.08em}
 .fresh{color:var(--ok)}.stale{color:var(--wn)}
 .right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
-.theme{display:flex;border:1px solid var(--line2);background:var(--barbg)}
-.theme button{font:12px/1 var(--body);letter-spacing:.1em;padding:7px 14px;background:transparent;border:0;color:var(--tx2);cursor:pointer;transition:all .25s}
-.theme button[aria-pressed="true"]{background:var(--ac);color:var(--on-ac)}
+.theme-menu{position:fixed;top:16px;right:20px;z-index:20;font:13px/1 var(--body)}
+.theme-btn{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--panel);border:1px solid var(--line2);color:var(--tx);cursor:pointer;backdrop-filter:blur(8px);transition:border-color .2s}
+.theme-btn:hover{border-color:var(--ac)}
+.theme-btn span{color:var(--tx3);font-size:12px}
+.theme-btn b{font-weight:600}
+.theme-btn i{font-style:normal;font-size:10px;color:var(--tx2);transition:transform .2s}
+.theme-btn[aria-expanded="true"] i{transform:rotate(180deg)}
+.theme-list{position:absolute;right:0;top:calc(100% + 6px);min-width:170px;margin:0;padding:6px;list-style:none;background:var(--panel);border:1px solid var(--line2);backdrop-filter:blur(10px);box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.theme-list[hidden]{display:none}
+.theme-list li{display:flex;align-items:center;gap:10px;padding:9px 10px;cursor:pointer;color:var(--tx2)}
+.theme-list li:hover,.theme-list li:focus{background:var(--ac-wash);color:var(--tx);outline:none}
+.theme-list li small{margin-left:auto;font-size:11px;color:var(--tx3)}
+.theme-list li .ck{width:12px;color:var(--ac)}
+.theme-list li[aria-selected="true"]{color:var(--tx)}
+[data-theme="ink"] .theme-list li .ck{color:var(--red)}
 .stats{display:flex;gap:10px}
 .stat{min-width:92px;padding:10px 14px;border:1px solid var(--line);background:var(--deck);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
 [data-theme="ink"] .stat{clip-path:none;box-shadow:3px 4px 0 rgba(40,34,26,.08)}
@@ -112,7 +130,7 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 .btn{font:13px/1 var(--body);color:var(--tx2);background:transparent;border:1px solid transparent;padding:9px 14px;cursor:pointer;position:relative;transition:color .2s,border-color .2s,background .2s}
 .btn:hover{color:var(--tx);border-color:var(--line2)}
 .btn.on{color:var(--on-ac);background:var(--ac);border-color:var(--ac);box-shadow:var(--glow)}
-.btn:focus-visible,.chip:focus-visible,.ln:focus-visible,.it-btn:focus-visible,.theme button:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+.btn:focus-visible,.chip:focus-visible,.ln:focus-visible,.it-btn:focus-visible,.theme-btn:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
 .sep{width:1px;height:22px;background:var(--line2);margin:0 6px}
 .tgl{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;color:var(--tx2);cursor:pointer;user-select:none}
 .tgl input{appearance:none;width:34px;height:18px;border:1px solid var(--line2);border-radius:9px;position:relative;cursor:pointer;transition:background .2s}
@@ -249,7 +267,8 @@ details a{color:var(--ac);text-decoration:none}
 [data-theme="ink"] .legend .d::before{border-color:rgba(31,27,22,.5)}
 
 @media (max-width:640px){
-  .wrap{padding:22px 16px 40px}
+  .wrap{padding:64px 16px 40px}
+  .theme-menu{top:12px;right:12px}
   h1{font-size:28px}
   .right{align-items:stretch;width:100%}
   .stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}
@@ -280,6 +299,11 @@ details a{color:var(--ac);text-decoration:none}
   </div>
 </div>
 
+<div class="theme-menu" id="themeMenu">
+  <button class="theme-btn" id="themeBtn" aria-haspopup="listbox" aria-expanded="false" aria-label="切换风格"><span>风格</span><b id="themeName"></b><i>▾</i></button>
+  <ul class="theme-list" id="themeList" role="listbox" hidden></ul>
+</div>
+
 <div class="wrap">
   <header class="top">
     <div>
@@ -289,9 +313,6 @@ details a{color:var(--ac);text-decoration:none}
       <details><summary id="srcLabel">数据来源</summary><div id="sources"></div></details>
     </div>
     <div class="right">
-      <div class="theme" role="group" aria-label="风格">
-        <button data-t="tech">科技</button><button data-t="ink">水墨</button>
-      </div>
       <div class="stats" id="stats"></div>
     </div>
   </header>
@@ -355,11 +376,29 @@ function setTheme(next) {
   firstPaint = !REDUCED;   // 切换后重放一次入场动画
   renderHeader(); draw();
 }
-document.querySelectorAll(".theme button").forEach(b => b.onclick = () => { if (b.dataset.t !== theme) setTheme(b.dataset.t); });
+function renderThemeMenu() {
+  const cur = THEMES.find(s => s.id === theme);
+  $("themeName").textContent = cur.name;
+  $("themeList").innerHTML = THEMES.map(s => '<li role="option" tabindex="-1" data-t="' + s.id + '" aria-selected="' + (s.id === theme) + '"><span class="ck">' + (s.id === theme ? "✓" : "") + "</span>" + esc(s.name) + "<small>" + esc(s.note) + "</small></li>").join("");
+  $("themeList").querySelectorAll("li").forEach(li => {
+    li.onclick = () => { closeMenu(); if (li.dataset.t !== theme) setTheme(li.dataset.t); };
+    li.onkeydown = e => {
+      const all = [...$("themeList").children], i = all.indexOf(li);
+      if (e.key === "ArrowDown") { e.preventDefault(); all[(i + 1) % all.length].focus(); }
+      if (e.key === "ArrowUp") { e.preventDefault(); all[(i - 1 + all.length) % all.length].focus(); }
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); li.click(); }
+    };
+  });
+}
+function openMenu() { $("themeList").hidden = false; $("themeBtn").setAttribute("aria-expanded", "true"); ($("themeList").querySelector('[aria-selected="true"]') || $("themeList").firstChild).focus(); }
+function closeMenu() { $("themeList").hidden = true; $("themeBtn").setAttribute("aria-expanded", "false"); }
+$("themeBtn").onclick = e => { e.stopPropagation(); $("themeList").hidden ? openMenu() : closeMenu(); };
+document.addEventListener("click", e => { if (!$("themeMenu").contains(e.target)) closeMenu(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("themeList").hidden) { closeMenu(); $("themeBtn").focus(); } });
 
 /* ---------- 顶部 ---------- */
 function renderHeader() {
-  document.querySelectorAll(".theme button").forEach(b => b.setAttribute("aria-pressed", b.dataset.t === theme));
+  renderThemeMenu();
   $("eyebrow").innerHTML = t().eyebrow;
   const days = Math.floor((Date.now() - new Date(M.meta.generated + "T00:00:00")) / 86400000);
   const stale = days > STALE_DAYS;
@@ -464,7 +503,7 @@ function renderPanel() {
       '<div class="it"><span>点层里的模块，看具体内容；带 ↗ 的条目直接打开 Notion 正本</span></div>',
       '<div class="it"><span>点上方的路线，看一件事怎么在各层之间流动；左右方向键切换步骤</span></div>',
       '<div class="it"><span>' + t().draftHint + "</span></div>",
-      '<div class="it"><span>右上角可以切换科技风和水墨风，会记住你的选择</span></div>']);
+      '<div class="it"><span>右上角的「风格」下拉菜单可以切换风格，会记住你的选择</span></div>']);
     return;
   }
   const l = layerById(sel.layer), li = M.layers.indexOf(l) + 1;

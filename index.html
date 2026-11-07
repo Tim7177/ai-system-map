@@ -87,15 +87,15 @@ a{color:inherit}
 /* =========================================================
    顶栏
    ========================================================= */
-.top{display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;justify-content:space-between;margin-bottom:22px}
-.eyebrow{font:600 11px/1 var(--mono);letter-spacing:.32em;color:var(--ac);opacity:.9}
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:end;margin-bottom:22px}
+.eyebrow{height:14px;font:600 12px/14px var(--mono);letter-spacing:.32em;color:var(--ac);opacity:.9}
 .eyebrow i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--ac);margin-right:8px;box-shadow:0 0 10px var(--ac);animation:blink 1.6s ease-in-out infinite;vertical-align:1px}
-[data-theme="ink"] .eyebrow{color:var(--red);letter-spacing:.5em;font-size:13px}
+[data-theme="ink"] .eyebrow{color:var(--red);letter-spacing:.5em}
 [data-theme="ink"] .eyebrow i{width:9px;height:9px;border-radius:1px;background:var(--red);box-shadow:none;animation:none}
 @keyframes blink{50%{opacity:.25}}
 h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 [data-theme="tech"] h1{background:linear-gradient(100deg,#fff 0%,var(--ac) 55%,#fff 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:sheen 7s ease-in-out infinite}
-[data-theme="ink"] h1{font-size:38px;letter-spacing:.12em;color:var(--tx)}
+[data-theme="ink"] h1{letter-spacing:.1em;color:var(--tx)}
 @keyframes sheen{50%{background-position:100% 0}}
 .meta{font:12px/1.6 var(--mono);color:var(--tx2)}
 .badge{display:inline-block;margin-left:10px;padding:2px 8px;border:1px solid currentColor;border-radius:3px;font-size:11px;letter-spacing:.08em}
@@ -117,7 +117,7 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 .theme-list li[aria-selected="true"]{color:var(--tx)}
 [data-theme="ink"] .theme-list li .ck{color:var(--red)}
 .stats{display:flex;gap:10px}
-.stat{min-width:92px;padding:10px 14px;border:1px solid var(--line);background:var(--deck);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
+.stat{width:124px;padding:10px 14px;border:1px solid var(--line);background:var(--deck);clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%)}
 [data-theme="ink"] .stat{clip-path:none;box-shadow:3px 4px 0 rgba(40,34,26,.08)}
 .stat b{display:block;font:600 24px/1.1 var(--mono);color:var(--ac)}
 .stat span{font:11px/1 var(--mono);color:var(--tx3);letter-spacing:.12em}
@@ -169,7 +169,7 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 .deck.dim{opacity:.32!important}
 
 /* 剪纸：叠层纸张、轻微错角、落纸入场 */
-[data-theme="ink"] .deck{border:0;backdrop-filter:none;border-radius:2px;
+[data-theme="ink"] .deck{border-color:transparent;backdrop-filter:none;border-radius:2px;
   box-shadow:0 1px 0 rgba(40,34,26,.06),4px 6px 0 -1px rgba(40,34,26,.07),8px 12px 18px -8px rgba(40,34,26,.25);
   transform:translateY(-26px) rotate(-2deg);animation-name:paperdrop;animation-duration:.85s}
 [data-theme="ink"] .deck:nth-child(odd){--rot:-.35deg}
@@ -181,12 +181,11 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 [data-theme="ink"] .deck:hover::after{background-position:0 0}
 [data-theme="ink"] .deck.hi{--settle:translateY(-4px) rotate(0deg);background:var(--deck2);box-shadow:0 1px 0 rgba(40,34,26,.06),6px 10px 0 -1px rgba(168,50,42,.14),12px 20px 26px -10px rgba(40,34,26,.35)}
 
-.idx{font:600 11px/1 var(--mono);color:var(--ac);letter-spacing:.18em;margin-bottom:6px}
-[data-theme="ink"] .idx{display:inline-block;color:var(--red);border:1.5px solid var(--red);padding:4px 5px 3px;font-size:13px;letter-spacing:0;line-height:1;border-radius:2px}
+.idx{display:block;width:max-content;height:22px;font:600 11px/22px var(--mono);color:var(--ac);letter-spacing:.18em;margin-bottom:6px}
+[data-theme="ink"] .idx{color:var(--red);box-shadow:inset 0 0 0 1.5px var(--red);padding:0 5px;font-size:13px;letter-spacing:0;border-radius:2px}
 .ln{background:none;border:0;padding:0;text-align:left;color:inherit;cursor:pointer;font:inherit;display:block}
-.ln b{display:block;font:600 18px/1.25 var(--disp);color:var(--tx);transition:color .2s}
-[data-theme="ink"] .ln b{font-size:20px;letter-spacing:.08em}
-.ln span{font-size:12px;color:var(--tx2)}
+.ln b{display:block;font:600 18px/24px var(--disp);color:var(--tx);transition:color .2s}
+.ln span{display:block;font-size:12px;line-height:20px;color:var(--tx2)}
 .ln:hover b{color:var(--ac)}
 [data-theme="ink"] .ln:hover b{color:var(--red)}
 .nums{margin-top:6px;display:flex;gap:4px;flex-wrap:wrap}
@@ -194,7 +193,7 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 .num.cur{background:var(--ac);color:var(--on-ac);box-shadow:var(--glow)}
 [data-theme="ink"] .num.cur{background:var(--red);border-color:var(--red)}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font:13px/1 var(--body);color:var(--tx);background:var(--ac-wash);border:1px solid var(--line2);padding:8px 12px;cursor:pointer;position:relative;transition:all .2s;opacity:0;animation:chipin .45s ease-out forwards}
+.chip{display:inline-flex;align-items:center;font:13px/16px var(--body);color:var(--tx);background:var(--ac-wash);border:1px solid var(--line2);padding:8px 12px;cursor:pointer;position:relative;transition:all .2s;opacity:0;animation:chipin .45s ease-out forwards}
 .chip.settled{animation:none;opacity:1}
 @keyframes chipin{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 .chip:hover{border-color:var(--ac);background:var(--ac-wash);box-shadow:var(--glow)}
@@ -203,9 +202,9 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 [data-theme="ink"] .chip:hover{background:rgba(31,27,22,.06);border-color:var(--tx)}
 .chip.sel{background:var(--ac);color:var(--on-ac);border-color:var(--ac)}
 .chip.draft{border-style:dashed;border-color:var(--wn);color:var(--wn);background:transparent}
-.chip.draft::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--wn);margin-right:7px;vertical-align:2px;animation:blink 1.4s infinite}
-[data-theme="ink"] .chip.draft{border-color:rgba(31,27,22,.4);color:var(--tx2);font-style:italic}
-[data-theme="ink"] .chip.draft::before{content:"稿";width:auto;height:auto;border-radius:1px;background:var(--red);color:#fbf6ea;font:600 10px/1 var(--disp);font-style:normal;padding:2px 3px;animation:none;vertical-align:1px}
+.chip.draft::before{content:"";display:inline-block;width:14px;height:14px;margin-right:6px;background:radial-gradient(circle,var(--wn) 3px,transparent 3.5px);animation:blink 1.4s infinite}
+[data-theme="ink"] .chip.draft{border-color:rgba(31,27,22,.4);color:var(--tx2)}
+[data-theme="ink"] .chip.draft::before{content:"稿";border-radius:1px;background:var(--red);color:#fbf6ea;font:600 10px/14px var(--disp);font-style:normal;text-align:center;animation:none}
 .chip.glow{background:var(--wn-wash);border-color:var(--wn);color:var(--wn)}
 [data-theme="tech"] .chip.glow{box-shadow:0 0 16px rgba(255,181,71,.35)}
 .chip.draft.sel{background:var(--wn);color:var(--on-ac);border-color:var(--wn)}
@@ -215,14 +214,14 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
    ========================================================= */
 .panel{position:sticky;top:18px;min-height:260px;padding:20px 22px 22px;background:var(--panel);border:1px solid var(--line2);backdrop-filter:blur(10px);clip-path:var(--cut-panel)}
 .panel::before{content:"";position:absolute;left:0;top:0;width:60px;height:2px;background:var(--ac);box-shadow:var(--glow)}
-[data-theme="ink"] .panel{border:0;border-radius:2px;box-shadow:4px 6px 0 -1px rgba(40,34,26,.07),10px 16px 24px -10px rgba(40,34,26,.3)}
+[data-theme="ink"] .panel{border-color:transparent;border-radius:2px;box-shadow:4px 6px 0 -1px rgba(40,34,26,.07),10px 16px 24px -10px rgba(40,34,26,.3)}
 [data-theme="ink"] .panel::before{width:100%;height:4px;background:var(--red);opacity:.85}
-.crumb{font:11px/1 var(--mono);letter-spacing:.2em;color:var(--tx3);margin:0 0 10px}
-[data-theme="ink"] .crumb{color:var(--red);font-size:13px;letter-spacing:.3em}
+.crumb{font:12px/14px var(--mono);letter-spacing:.2em;color:var(--tx3);margin:0 0 10px}
+[data-theme="ink"] .crumb{color:var(--red);letter-spacing:.3em}
 .crumb button{background:none;border:0;padding:0;font:inherit;letter-spacing:inherit;color:var(--ac);cursor:pointer}
 [data-theme="ink"] .crumb button{color:var(--red);text-decoration:underline;text-underline-offset:3px}
 .pt{font:600 22px/1.3 var(--disp);margin:0 0 12px}
-[data-theme="ink"] .pt{font-size:24px;letter-spacing:.06em}
+[data-theme="ink"] .pt{letter-spacing:.06em}
 .role{font-size:14px;color:var(--tx2);margin:0 0 14px}
 .it{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px;opacity:0;animation:chipin .35s ease-out forwards}
 .it a{text-decoration:none;transition:color .2s}
@@ -235,16 +234,15 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 .tag.w{border-color:var(--wn);color:var(--wn)}
 .rel{margin-top:16px;padding:12px 14px;border-left:2px solid var(--ac);background:var(--ac-wash);font-size:13px;color:var(--tx2);line-height:1.8}
 [data-theme="ink"] .rel{border-left-color:var(--red)}
-.rel b{font:600 11px var(--mono);color:var(--ac);letter-spacing:.15em;margin-right:8px}
-[data-theme="ink"] .rel b{color:var(--red);font-size:13px}
+.rel b{font:600 12px var(--mono);color:var(--ac);letter-spacing:.15em;margin-right:8px}
+[data-theme="ink"] .rel b{color:var(--red)}
 .step{display:flex;gap:12px;padding:9px 10px;margin:0 -10px;cursor:pointer;font-size:14px;color:var(--tx3);transition:color .25s,background .25s;border-left:2px solid transparent;position:relative}
 .step:hover,.step.done{color:var(--tx2)}
 .step.cur{color:var(--tx);background:var(--ac-wash);border-left-color:var(--ac)}
 [data-theme="ink"] .step.cur{background:transparent;border-left-color:transparent}
 [data-theme="ink"] .step.cur::after{content:"";position:absolute;left:62px;right:10px;bottom:3px;height:6px;border-radius:3px;background:rgba(168,50,42,.28);transform-origin:left;animation:brush .7s ease-out}
 @keyframes brush{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-.step .ly{font:11px/22px var(--mono);color:var(--ac-dim);min-width:52px;letter-spacing:.06em}
-[data-theme="ink"] .step .ly{font-size:13px}
+.step .ly{font:12px/22px var(--mono);color:var(--ac-dim);flex:0 0 64px;letter-spacing:.06em}
 .step.cur .ly{color:var(--ac)}
 [data-theme="ink"] .step.cur .ly{color:var(--red)}
 .nav{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
@@ -252,21 +250,42 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 .hint{font:11px var(--mono);color:var(--tx3);letter-spacing:.08em}
 .prog{height:2px;background:var(--line);margin:4px 0 14px;position:relative}
 .prog i{position:absolute;left:0;top:0;bottom:0;background:var(--ac);box-shadow:var(--glow);transition:width .5s}
-[data-theme="ink"] .prog{height:3px}
 [data-theme="ink"] .prog i{background:var(--tx);border-radius:2px}
 details{margin-top:8px;font:12px var(--mono);color:var(--tx3)}
 details summary{cursor:pointer}
 details a{color:var(--ac);text-decoration:none}
 [data-theme="ink"] details a{color:var(--red)}
-.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font:11px var(--mono);color:var(--tx3);letter-spacing:.08em}
-[data-theme="ink"] .legend{font-size:13px}
+.legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:22px;font:12px/16px var(--mono);color:var(--tx3);letter-spacing:.08em}
 .legend span::before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line2)}
 .legend .d::before{border:1px dashed var(--wn)}
 .legend .h::before{background:var(--ac);border-color:var(--ac)}
 [data-theme="ink"] .legend .h::before{background:var(--red);border-color:var(--red)}
 [data-theme="ink"] .legend .d::before{border-color:rgba(31,27,22,.5)}
 
+.gapn{display:inline-block;margin-top:8px;font:11px/1 var(--mono);padding:3px 7px;border:1px solid var(--wn);color:var(--wn);white-space:nowrap}
+.step .ly{white-space:nowrap}
+.sb{display:flex;flex-direction:column;gap:3px;min-width:0}
+.sb .who{color:inherit}
+.sb .who em{font-style:normal;color:var(--tx3);margin-right:4px}
+.step.cur .sb .who em{color:var(--ac)}
+.sks{display:flex;flex-wrap:wrap;gap:4px;margin-top:2px}
+.sk{font-size:12px;padding:2px 7px;border:1px solid var(--line2);color:var(--tx2);text-decoration:none;cursor:pointer;background:none;font-family:inherit;transition:color .2s,border-color .2s}
+.sk:hover{color:var(--ac);border-color:var(--ac)}
+.sec{font:600 12px/14px var(--mono);letter-spacing:.2em;color:var(--tx3);margin:20px 0 4px}
+.ed{display:block!important}
+.ed b{display:block;font-size:14px;color:var(--tx)}
+.ed span{display:block;font-size:12px;color:var(--tx3);margin-top:2px}
+.ed i{display:block;font-style:normal;font-size:13px;color:var(--tx2);margin-top:4px}
+.foot{margin-top:16px;font-size:12px;color:var(--tx3);line-height:1.7}
+[data-theme="ink"] .gapn{border-radius:2px;border-color:var(--red);color:var(--red)}
+[data-theme="ink"] .sk{border-radius:2px}
+[data-theme="ink"] .sk:hover{color:var(--red);border-color:var(--red)}
+[data-theme="ink"] .step.cur .sb .who em{color:var(--red)}
+[data-theme="ink"] .sec{color:var(--red);letter-spacing:.3em}
+
 @media (max-width:640px){
+  .top{grid-template-columns:1fr}
+  .stat{width:auto}
   .wrap{padding:64px 16px 40px}
   .theme-menu{top:12px;right:12px}
   h1{font-size:28px}
@@ -346,6 +365,7 @@ const T = {
     stats: ["LAYERS", "MODULES", "ITEMS", "IN PROGRESS"],
     idx: (i, n) => "L" + (i + 1) + " / " + String(n).padStart(2, "0"),
     guide: "GUIDE", route: k => "ROUTE · " + String(k + 1).padStart(2, "0"), layer: i => "LAYER L" + i, module: "MODULE",
+    sidx: i => i === 0 ? "ALL" : "T" + i, scene: i => "SCENE · " + (i === 0 ? "ALL" : String(i).padStart(2, "0")), skill: "SKILL",
     up: "UP", down: "DOWN", draftHint: "琥珀色虚线是草案、待建、待配置或待核实的部分",
     legend: ["当前所在层", "草案、待建、待配置或待核实", "点 ↗ 打开 Notion 正本"]
   },
@@ -354,13 +374,15 @@ const T = {
     stats: ["层", "模块", "条目", "改造中"],
     idx: i => CN[i] || String(i + 1),
     guide: "观图之法", route: k => "路线 · " + (CN[k] || k + 1), layer: i => "第" + (CN[i - 1] || i) + "层", module: "模块",
-    up: "上承", down: "下启", draftHint: "带「稿」字、淡墨虚线的，是草案、待建、待配置或待核实的部分",
+    sidx: i => i === 0 ? "通" : (CN[i - 1] || String(i)), scene: i => i === 0 ? "通用之法" : "场景 · " + (CN[i - 1] || i), skill: "技能",
+    up: "上承", down: "下启", draftHint: "带「稿」字的是草案、待建、待配置或待核实的部分",
     legend: ["朱印 · 当前所在层", "稿 · 草案、待建、待配置或待核实", "点 ↗ 打开 Notion 正本"]
   }
 };
 
 let theme = document.documentElement.dataset.theme;
 let mode = null, step = 0, sel = null, showDraft = false, firstPaint = true;
+let view = new URLSearchParams(location.search).get("view") === "scene" && M.scenarios ? "scene" : "map", sc = 0, scStep = 0, scSkill = null;   // view: map 看结构 / scene 按场景
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -425,7 +447,9 @@ function countUp(el, to) {
 function renderBar() {
   const bar = $("bar"); bar.innerHTML = "";
   const mk = (label, on, fn) => { const b = document.createElement("button"); b.className = "btn" + (on ? " on" : ""); b.textContent = label; b.onclick = fn; bar.appendChild(b); };
-  mk("看结构", mode === null, () => { mode = null; draw(); });
+  mk("看结构", view === "map" && mode === null, () => { view = "map"; mode = null; draw(); });
+  if (M.scenarios) mk("按场景", view === "scene", () => { view = "scene"; mode = null; scSkill = null; draw(); });
+  if (view === "scene") return;
   const sp = document.createElement("span"); sp.className = "sep"; bar.appendChild(sp);
   M.flows.forEach((f, i) => mk(f.name, mode === i, () => { mode = i; step = 0; sel = null; draw(); }));
   const lb = document.createElement("label"); lb.className = "tgl";
@@ -436,6 +460,7 @@ function renderBar() {
 
 /* ---------- 五层 ---------- */
 function renderLayers() {
+  if (view === "scene") return renderScenes();
   const box = $("layers"); box.innerHTML = "";
   const flow = mode !== null ? M.flows[mode] : null;
   const cur = flow ? flow.steps[step].layer : null;
@@ -469,6 +494,7 @@ function placeProbe(cur) {
   const p = $("probe");
   if (!cur) { p.classList.remove("on"); lastProbe = null; return; }
   const deck = document.querySelector('.deck[data-layer="' + cur + '"]');
+  if (!deck) { p.classList.remove("on"); return; }
   p.style.top = (deck.offsetTop + deck.offsetHeight / 2 - p.offsetHeight / 2) + "px";
   p.classList.add("on");
   if (cur !== lastProbe) { p.classList.remove("stamp"); void p.offsetWidth; p.classList.add("stamp"); }
@@ -486,6 +512,7 @@ function itemHtml(it) {
 }
 function renderPanel() {
   const p = $("panel");
+  if (view === "scene") return renderScenePanel(p);
   if (mode !== null) {
     const f = M.flows[mode], n = f.steps.length;
     p.innerHTML = '<p class="crumb">' + t().route(mode) + '</p><p class="pt">' + esc(f.name) + "</p>" +
@@ -502,6 +529,7 @@ function renderPanel() {
       '<div class="it"><span>点左边的层名，看这一层管什么、和上下层怎么配合</span></div>',
       '<div class="it"><span>点层里的模块，看具体内容；带 ↗ 的条目直接打开 Notion 正本</span></div>',
       '<div class="it"><span>点上方的路线，看一件事怎么在各层之间流动；左右方向键切换步骤</span></div>',
+      '<div class="it"><span>点「按场景」，看每类工作怎么走、用哪些技能、还能怎么改进</span></div>',
       '<div class="it"><span>' + t().draftHint + "</span></div>",
       '<div class="it"><span>右上角的「风格」下拉菜单可以切换风格，会记住你的选择</span></div>']);
     return;
@@ -525,11 +553,85 @@ function renderPanel() {
 
 function go(d) { const n = M.flows[mode].steps.length; step = (step + d + n) % n; draw(); }
 document.addEventListener("keydown", e => {
+  if (view === "scene") {
+    if (scSkill || !$("themeList").hidden) return;
+    const n = M.scenarios[sc].steps.length;
+    if (e.key === "ArrowRight") { scStep = (scStep + 1) % n; draw(); }
+    if (e.key === "ArrowLeft") { scStep = (scStep - 1 + n) % n; draw(); }
+    if (e.key === "ArrowDown") { e.preventDefault(); sc = (sc + 1) % M.scenarios.length; scStep = 0; draw(); }
+    if (e.key === "ArrowUp") { e.preventDefault(); sc = (sc - 1 + M.scenarios.length) % M.scenarios.length; scStep = 0; draw(); }
+    return;
+  }
   if (mode === null) return;
   if (e.key === "ArrowRight") go(1);
   if (e.key === "ArrowLeft") go(-1);
 });
-window.addEventListener("resize", () => placeProbe(mode !== null ? M.flows[mode].steps[step].layer : null));
+window.addEventListener("resize", () => placeProbe(view === "scene" ? "sc-" + M.scenarios[sc].id : mode !== null ? M.flows[mode].steps[step].layer : null));
+
+/* ---------- 按场景 ---------- */
+const skillLink = n => {
+  const k = (M.skills || {})[n];
+  return '<button class="sk" data-sk="' + esc(n) + '"' + (k ? ' title="' + esc(k.use) + '"' : "") + ">" + esc(n) + "</button>";
+};
+const bindSkills = root => root.querySelectorAll("[data-sk]").forEach(b => b.onclick = e => { e.stopPropagation(); scSkill = b.dataset.sk; draw(); });
+
+function renderScenes() {
+  const box = $("layers"); box.innerHTML = "";
+  M.scenarios.forEach((s, i) => {
+    const d = document.createElement("section");
+    d.className = "deck" + (i === sc && !scSkill ? " hi" : "") + (firstPaint ? "" : " settled");
+    d.dataset.layer = "sc-" + s.id;
+    if (firstPaint) d.style.animationDelay = (i * 0.1) + "s";
+    const g = (s.gaps || []).length;
+    d.innerHTML = '<div><div class="idx">' + t().sidx(i) + '</div><button class="ln"><b>' + esc(s.name) + "</b><span>" + esc(s.sub) + "</span></button>" +
+      (g ? '<span class="gapn">' + g + " 处可改进</span>" : "") + '</div><div class="chips"></div>';
+    d.querySelector(".ln").onclick = () => { sc = i; scStep = 0; scSkill = null; draw(); };
+    const chips = d.querySelector(".chips");
+    s.skills.forEach((n, j) => {
+      const b = document.createElement("button");
+      const k = M.skills[n] || {};
+      b.className = "chip" + (firstPaint ? "" : " settled") + (scSkill === n ? " sel" : "");
+      b.textContent = n; b.title = k.use || "";
+      if (firstPaint) b.style.animationDelay = (0.3 + i * 0.1 + j * 0.05) + "s";
+      b.onclick = () => { scSkill = n; draw(); };
+      chips.appendChild(b);
+    });
+    box.appendChild(d);
+  });
+  placeProbe(scSkill ? null : "sc-" + M.scenarios[sc].id);
+}
+
+function renderScenePanel(p) {
+  if (scSkill) {
+    const k = M.skills[scSkill] || {};
+    const used = M.scenarios.map((s, i) => [s, i]).filter(([s]) => s.skills.includes(scSkill) || s.steps.some(x => (x.skills || []).includes(scSkill)));
+    p.innerHTML = '<p class="crumb"><button id="up">' + t().scene(sc) + " · " + esc(M.scenarios[sc].name) + "</button> / " + t().skill + "</p>" +
+      '<p class="pt">' + esc(scSkill) + "</p>" + '<p class="role">' + esc(k.use || "") + "</p>" +
+      itemsHtml([
+        '<div class="it"><span>调用方式</span><span class="tag' + (k.call === "自动" ? "" : " w") + '">' + esc(k.call || "未知") + "</span></div>",
+        '<div class="it"><span>快捷口令（可不用，直接说要做什么也行）</span><span class="tag">' + esc(k.cmd || "无") + "</span></div>",
+        k.url ? '<div class="it"><a href="' + esc(k.url) + '" target="_blank" rel="noopener">打开 Notion 正本</a></div>' : ""
+      ]) +
+      '<p class="sec">用在这些场景</p>' + itemsHtml(used.map(([s, i]) => '<div class="it"><button class="it-btn" data-sc="' + i + '">' + esc(s.name) + ' ›</button></div>'));
+    $("up").onclick = () => { scSkill = null; draw(); };
+    p.querySelectorAll("[data-sc]").forEach(b => b.onclick = () => { sc = +b.dataset.sc; scStep = 0; scSkill = null; draw(); });
+    return;
+  }
+  const s = M.scenarios[sc], n = s.steps.length;
+  let h = '<p class="crumb">' + t().scene(sc) + ' <span class="tag w">草案</span></p><p class="pt">' + esc(s.name) + '</p><p class="role">' + esc(s.when) + "</p>" +
+    '<div class="prog"><i style="width:' + ((scStep + 1) / n * 100) + '%"></i></div>' +
+    s.steps.map((x, k) => '<div class="step' + (k === scStep ? " cur" : k < scStep ? " done" : "") + '" data-k="' + k + '"><span class="ly">' + esc(x.stage) + '</span><span class="sb">' +
+      '<span class="who"><em>你</em>' + esc(x.you) + (x.tag ? ' <span class="tag w">' + esc(x.tag) + "</span>" : "") + "</span>" +
+      '<span class="who"><em>Agent</em>' + esc(x.agent) + "</span>" +
+      (x.skills ? '<span class="sks">' + x.skills.map(skillLink).join("") + "</span>" : "") + "</span></div>").join("");
+  if (s.deliver) h += '<div class="rel"><b>' + (theme === "ink" ? "验收" : "DONE WHEN") + "</b>" + esc(s.deliver) + "</div>";
+  if (s.edits) h += '<p class="sec">中途要改</p>' + itemsHtml(s.edits.map(e => '<div class="it ed"><b>' + esc(e.k) + "</b><span>" + esc(e.e) + "</span><i>" + esc(e.d) + "</i></div>"));
+  if (s.gaps && s.gaps.length) h += '<p class="sec">还能怎么改进</p>' + itemsHtml(s.gaps.map(g => '<div class="it"><span>' + esc(g.t) + '</span><span class="tag' + (WARN_TAGS.includes(g.tag) ? " w" : "") + '">' + esc(g.tag) + "</span></div>"));
+  h += '<p class="foot">上下方向键换场景，左右方向键走步骤。场景流程的正本在工作方法草案附录 A，目前是草案；怎么改见附录 B。</p>';
+  p.innerHTML = h;
+  p.querySelectorAll(".step").forEach(el => el.onclick = () => { scStep = +el.dataset.k; draw(); });
+  bindSkills(p);
+}
 
 function draw() { renderBar(); renderLayers(); renderPanel(); firstPaint = false; }
 

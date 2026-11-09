@@ -208,6 +208,22 @@ h1{font:600 34px/1.15 var(--disp);margin:10px 0 6px;letter-spacing:.02em}
 .chip.glow{background:var(--wn-wash);border-color:var(--wn);color:var(--wn)}
 [data-theme="tech"] .chip.glow{box-shadow:0 0 16px rgba(255,181,71,.35)}
 .chip.draft.sel{background:var(--wn);color:var(--on-ac);border-color:var(--wn)}
+/* 工作流全貌：缺失的模块、模块编号、串联箭头 */
+:root,[data-theme="tech"]{--bad:#ff6b81}
+[data-theme="ink"]{--bad:#a8322a}
+.chip.miss{border-color:var(--bad);color:var(--bad)}
+.chip.miss::before{background:radial-gradient(circle,var(--bad) 3px,transparent 3.5px)}
+[data-theme="ink"] .chip.miss{border-color:var(--red);color:var(--red)}
+[data-theme="ink"] .chip.miss::before{content:"缺"}
+.chip.opt{opacity:.72}
+.chip.opt.settled{opacity:.72}
+.chip .mid{font:11px/16px "JetBrains Mono",ui-monospace,monospace;color:var(--tx3);margin-right:6px}   /* 两套风格用同一字体，保证换行位置一致 */
+.chip.sel .mid{color:inherit}
+.lnk{display:inline-flex;align-items:center;gap:6px}
+.arr{align-self:center;font:13px/16px "JetBrains Mono",ui-monospace,monospace;color:var(--tx3);padding:0 1px}
+.tag.bad{border-color:var(--bad);color:var(--bad)}
+.tag.ok{border-color:var(--ok);color:var(--ok)}
+.pill{display:inline-block;font:11px/1 var(--mono);padding:3px 7px;border:1px solid var(--line2);color:var(--tx2);margin:0 6px 6px 0}
 
 /* =========================================================
    右侧面板
@@ -382,7 +398,9 @@ const T = {
 
 let theme = document.documentElement.dataset.theme;
 let mode = null, step = 0, sel = null, showDraft = false, firstPaint = true;
-let view = new URLSearchParams(location.search).get("view") === "scene" && M.scenarios ? "scene" : "map", sc = 0, scStep = 0, scSkill = null;   // view: map 看结构 / scene 按场景
+const qView = new URLSearchParams(location.search).get("view");
+let view = qView === "scene" && M.scenarios ? "scene" : qView === "wf" && M.workflows ? "wf" : "map", sc = 0, scStep = 0, scSkill = null;   // view: map 看结构 / scene 按场景 / wf 工作流全貌
+let wfi = 0, wfMod = null;   // 工作流全貌：当前卡片序号、选中的模块编号
 
 const $ = id => document.getElementById(id);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
@@ -449,7 +467,8 @@ function renderBar() {
   const mk = (label, on, fn) => { const b = document.createElement("button"); b.className = "btn" + (on ? " on" : ""); b.textContent = label; b.onclick = fn; bar.appendChild(b); };
   mk("看结构", view === "map" && mode === null, () => { view = "map"; mode = null; draw(); });
   if (M.scenarios) mk("按场景", view === "scene", () => { view = "scene"; mode = null; scSkill = null; draw(); });
-  if (view === "scene") return;
+  if (M.workflows) mk("工作流全貌", view === "wf", () => { view = "wf"; mode = null; wfMod = null; draw(); });
+  if (view === "scene" || view === "wf") return;
   const sp = document.createElement("span"); sp.className = "sep"; bar.appendChild(sp);
   M.flows.forEach((f, i) => mk(f.name, mode === i, () => { mode = i; step = 0; sel = null; draw(); }));
   const lb = document.createElement("label"); lb.className = "tgl";
@@ -461,6 +480,7 @@ function renderBar() {
 /* ---------- 五层 ---------- */
 function renderLayers() {
   if (view === "scene") return renderScenes();
+  if (view === "wf") return renderWf();
   const box = $("layers"); box.innerHTML = "";
   const flow = mode !== null ? M.flows[mode] : null;
   const cur = flow ? flow.steps[step].layer : null;
@@ -513,6 +533,7 @@ function itemHtml(it) {
 function renderPanel() {
   const p = $("panel");
   if (view === "scene") return renderScenePanel(p);
+  if (view === "wf") return renderWfPanel(p);
   if (mode !== null) {
     const f = M.flows[mode], n = f.steps.length;
     p.innerHTML = '<p class="crumb">' + t().route(mode) + '</p><p class="pt">' + esc(f.name) + "</p>" +
@@ -530,6 +551,7 @@ function renderPanel() {
       '<div class="it"><span>点层里的模块，看具体内容；带 ↗ 的条目直接打开 Notion 正本</span></div>',
       '<div class="it"><span>点上方的路线，看一件事怎么在各层之间流动；左右方向键切换步骤</span></div>',
       '<div class="it"><span>点「按场景」，看每类工作怎么走、用哪些技能、还能怎么改进</span></div>',
+      '<div class="it"><span>点「工作流全貌」，看有哪些工作流、由哪些模块串成，哪些模块还缺、先做哪个</span></div>',
       '<div class="it"><span>' + t().draftHint + "</span></div>",
       '<div class="it"><span>右上角的「风格」下拉菜单可以切换风格，会记住你的选择</span></div>']);
     return;
@@ -553,6 +575,13 @@ function renderPanel() {
 
 function go(d) { const n = M.flows[mode].steps.length; step = (step + d + n) % n; draw(); }
 document.addEventListener("keydown", e => {
+  if (view === "wf") {
+    if (!$("themeList").hidden) return;
+    const n = wfDecks().length;
+    if (e.key === "ArrowDown") { e.preventDefault(); wfi = (wfi + 1) % n; wfMod = null; draw(); }
+    if (e.key === "ArrowUp") { e.preventDefault(); wfi = (wfi - 1 + n) % n; wfMod = null; draw(); }
+    return;
+  }
   if (view === "scene") {
     if (scSkill || !$("themeList").hidden) return;
     const n = M.scenarios[sc].steps.length;
@@ -566,7 +595,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") go(1);
   if (e.key === "ArrowLeft") go(-1);
 });
-window.addEventListener("resize", () => placeProbe(view === "scene" ? "sc-" + M.scenarios[sc].id : mode !== null ? M.flows[mode].steps[step].layer : null));
+window.addEventListener("resize", () => placeProbe(view === "wf" ? (wfMod ? null : "wf-" + wfi) : view === "scene" ? "sc-" + M.scenarios[sc].id : mode !== null ? M.flows[mode].steps[step].layer : null));
 
 /* ---------- 按场景 ---------- */
 const skillLink = n => {
@@ -631,6 +660,112 @@ function renderScenePanel(p) {
   p.innerHTML = h;
   p.querySelectorAll(".step").forEach(el => el.onclick = () => { scStep = +el.dataset.k; draw(); });
   bindSkills(p);
+}
+
+/* ---------- 工作流全貌 ---------- */
+const modById = id => M.modules.find(m => m.id === id);
+const ST_CLS = { "已有": "", "部分": " draft", "缺失": " draft miss" };
+const stTag = st => '<span class="tag' + (st === "缺失" ? " bad" : st === "部分" ? " w" : " ok") + '">' + esc(st) + "</span>";
+const tierById = id => M.rollout.tiers.find(x => x.id === id);
+function wfDecks() {
+  const ds = [
+    { key: "all", name: "全部模块", sub: "18 块积木：已有、部分、缺失", mods: M.modules.map(m => m.id) },
+    { key: "pri", name: "落地顺序", sub: "缺的和不全的，按优先级排", mods: M.rollout.order.map(o => o.m), num: true }
+  ];
+  M.workflows.forEach(w => ds.push({ key: w.id, name: w.name, sub: w.freq + " · 重要度 " + w.imp, chain: w.chain, wf: w }));
+  ds.push({ key: "solo", name: M.solo.name, sub: M.solo.sub, mods: M.solo.mods });
+  return ds;
+}
+function wfChip(id, j, i, extra, label) {
+  const m = modById(id), b = document.createElement("button");
+  b.className = "chip" + ST_CLS[m.status] + (extra || "") + (firstPaint ? "" : " settled") + (wfMod === id ? " sel" : "");
+  b.innerHTML = '<span class="mid">' + (label || m.id) + "</span>" + esc(m.name);
+  b.title = m.io;
+  if (firstPaint) b.style.animationDelay = (0.3 + i * 0.08 + j * 0.04) + "s";
+  b.onclick = () => { wfi = i; wfMod = id; draw(); };
+  return b;
+}
+function renderWf() {
+  const box = $("layers"); box.innerHTML = "";
+  wfDecks().forEach((dk, i) => {
+    const d = document.createElement("section");
+    d.className = "deck" + (i === wfi && !wfMod ? " hi" : "") + (firstPaint ? "" : " settled");
+    d.dataset.layer = "wf-" + i;
+    if (firstPaint) d.style.animationDelay = (i * 0.08) + "s";
+    const miss = (dk.chain ? dk.chain.map(c => c.m) : dk.mods).filter(id => modById(id).status !== "已有").length;
+    d.innerHTML = '<div><div class="idx">' + (dk.wf ? dk.wf.id : i === 0 ? "ALL" : dk.key === "pri" ? "TODO" : "SOLO") + '</div><button class="ln"><b>' + esc(dk.name) + "</b><span>" + esc(dk.sub) + "</span></button>" +
+      (dk.chain && miss ? '<span class="gapn">' + miss + " 块待补</span>" : "") + '</div><div class="chips"></div>';
+    d.querySelector(".ln").onclick = () => { wfi = i; wfMod = null; draw(); };
+    const chips = d.querySelector(".chips");
+    if (dk.chain) dk.chain.forEach((c, j) => {
+      const g = document.createElement("span"); g.className = "lnk";   // 箭头和后一个模块绑在一起，换行时不落单
+      if (j) { const a = document.createElement("span"); a.className = "arr"; a.textContent = c.alt && dk.chain[j - 1].alt ? "/" : "→"; g.appendChild(a); }
+      g.appendChild(wfChip(c.m, j, i, c.opt ? " opt" : "")); chips.appendChild(g);
+    });
+    else dk.mods.forEach((id, j) => chips.appendChild(wfChip(id, j, i, "", dk.num ? (j + 1) + " · " + id : null)));
+    box.appendChild(d);
+  });
+  placeProbe(wfMod ? null : "wf-" + wfi);
+}
+function renderWfPanel(p) {
+  const dk = wfDecks()[wfi];
+  if (wfMod) {
+    const m = modById(wfMod), tier = tierById(m.vtype);
+    const used = M.workflows.filter(w => w.chain.some(c => c.m === m.id));
+    const ord = M.rollout.order.findIndex(o => o.m === m.id);
+    let h = '<p class="crumb"><button id="up">' + esc(dk.name) + "</button> / 模块</p>" +
+      '<p class="pt">' + m.id + " · " + esc(m.name) + " " + stTag(m.status) + (m.pri ? ' <span class="tag w">' + m.pri + "</span>" : "") + "</p>" +
+      '<p class="role">' + esc(m.io) + "</p>" +
+      itemsHtml([
+        '<div class="it"><span>分类</span><span class="tag">' + esc(m.group) + "</span></div>",
+        '<div class="it"><span>用到的技能</span><span class="sks">' + (m.skills.length ? m.skills.map(skillLink).join("") : '<span class="tag bad">无</span>') + "</span></div>",
+        '<div class="it"><span>验证方式</span><span class="tag">' + esc(tier.name) + " · " + esc(tier.period) + "</span></div>"
+      ]);
+    if (m.gap) h += '<div class="rel"><b>' + (m.status === "已有" ? "可改进" : "缺口") + "</b>" + esc(m.gap) + "</div>";
+    if (m.note) h += '<div class="rel"><b>备注</b>' + esc(m.note) + "</div>";
+    if (ord >= 0) h += '<div class="rel"><b>落地第 ' + (ord + 1) + " 位</b>" + esc(M.rollout.order[ord].why) + "</div>";
+    h += '<p class="sec">用在这些工作流</p>' + (used.length ? itemsHtml(used.map(w => '<div class="it"><button class="it-btn" data-w="' + w.id + '">' + w.id + " · " + esc(w.name) + ' ›</button></div>')) : '<p class="role">不串进工作流，单独调用。</p>');
+    p.innerHTML = h;
+    $("up").onclick = () => { wfMod = null; draw(); };
+    p.querySelectorAll("[data-w]").forEach(b => b.onclick = () => { wfi = wfDecks().findIndex(d => d.key === b.dataset.w); wfMod = null; draw(); });
+    p.querySelectorAll("[data-sk]").forEach(b => b.onclick = () => { view = "scene"; scSkill = b.dataset.sk; draw(); });
+    return;
+  }
+  const foot = '<p class="foot">上下方向键换卡片；点模块看输入输出、缺口和验证方式。草案，正本在「工作场景做法卡｜草案」第 0 节。</p>';
+  if (dk.key === "all") {
+    const cnt = st => M.modules.filter(m => m.status === st).length;
+    const grp = [...new Set(M.modules.map(m => m.group))];
+    p.innerHTML = '<p class="crumb">工作流全貌 <span class="tag w">草案</span></p><p class="pt">两层结构：模块 + 工作流</p>' +
+      '<p class="role">模块是能单独完成的一件事，输入输出写得清楚；工作流为一个具体目标把模块串起来。你只说目标，Agent 按工作流调用模块，并在第一行说明这次走哪几步。</p>' +
+      (M.principle ? '<div class="rel"><b>原则</b>' + esc(M.principle) + "</div>" : "") +
+      itemsHtml([
+        '<div class="it"><span>已有：有技能，能直接用</span><span class="tag ok">' + cnt("已有") + " 块</span></div>",
+        '<div class="it"><span>部分：有技能，但只管一部分</span><span class="tag w">' + cnt("部分") + " 块</span></div>",
+        '<div class="it"><span>缺失：没有技能</span><span class="tag bad">' + cnt("缺失") + " 块</span></div>",
+        '<div class="it"><span>工作流</span><span class="tag">' + M.workflows.length + " 条</span></div>"
+      ]) +
+      '<p class="sec">按分类</p>' + itemsHtml(grp.map(g => '<div class="it"><span>' + esc(g) + '</span><span class="sks">' + M.modules.filter(m => m.group === g).map(m => '<button class="sk" data-m="' + m.id + '">' + esc(m.name) + "</button>").join("") + "</span></div>")) +
+      '<div class="rel"><b>入口</b>默认从 Claude Code 开口；Codex 做工程和成品；Notion 存正本；路由层（Grokbot 或 Hermes，11-22 二选一）只做外部成品和后台定时。DSH 和 Claude Code 同类，归执行层，暂不引入。</div>' + foot;
+  } else if (dk.key === "pri") {
+    p.innerHTML = '<p class="crumb">落地顺序 <span class="tag w">草案</span></p><p class="pt">先做哪个</p>' +
+      M.rollout.order.map((o, k) => { const m = modById(o.m); return '<div class="step" data-m="' + m.id + '"><span class="ly">' + (k + 1) + " · " + (m.pri || "") + '</span><span class="sb"><span class="who"><em>' + m.id + "</em>" + esc(m.name) + " " + stTag(m.status) + '</span><span class="who">' + esc(o.why) + "</span></span></div>"; }).join("") +
+      '<p class="sec">怎么验证（总规则）</p>' +
+      M.rollout.tiers.map(x => '<div class="rel"><b>' + x.id + " · " + esc(x.name) + "</b>" + esc(x.what) + "。" + esc(x.how) + "，" + esc(x.period) + "。看：" + esc(x.look) + "。</div>").join("") +
+      itemsHtml(M.rollout.rules.map(r => '<div class="it"><span>' + esc(r) + "</span></div>")) + foot;
+  } else if (dk.key === "solo") {
+    p.innerHTML = '<p class="crumb">单独调用</p><p class="pt">' + esc(M.solo.name) + '</p><p class="role">' + esc(M.solo.note) + "</p>" +
+      itemsHtml(M.solo.mods.map(id => { const m = modById(id); return '<div class="it"><button class="it-btn" data-m="' + id + '">' + id + " · " + esc(m.name) + ' ›</button><span class="tag">' + esc(m.io.split(" → ")[1] || "") + "</span></div>"; })) + foot;
+  } else {
+    const w = dk.wf, tier = tierById(w.vtype);
+    p.innerHTML = '<p class="crumb">' + w.id + ' <span class="tag w">草案</span></p><p class="pt">' + esc(w.name) + "</p>" +
+      '<p class="role">' + esc(w.goal) + "</p>" +
+      '<div><span class="pill">' + esc(w.freq) + '</span><span class="pill">重要度 ' + esc(w.imp) + '</span><span class="pill">' + esc(tier.name) + " · " + esc(tier.period) + "</span></div>" +
+      '<div class="rel"><b>你说</b>' + esc(w.cmd) + "</div>" +
+      (w.note ? '<div class="rel"><b>说明</b>' + esc(w.note) + "</div>" : "") +
+      w.chain.map((c, k) => { const m = modById(c.m); return '<div class="step" data-m="' + m.id + '"><span class="ly">' + (k + 1) + " · " + m.id + '</span><span class="sb"><span class="who"><em>模块</em>' + esc(m.name) + " " + stTag(m.status) + (c.opt ? ' <span class="tag">可选</span>' : c.alt ? ' <span class="tag">三选一</span>' : "") + '</span><span class="who"><em>你</em>' + esc(c.you) + "</span></span></div>"; }).join("") +
+      '<div class="rel"><b>验证</b>' + esc(tier.how) + "，" + esc(tier.period) + "。看：" + esc(tier.look) + "。</div>" + foot;
+  }
+  p.querySelectorAll("[data-m]").forEach(el => el.onclick = () => { wfMod = el.dataset.m; draw(); });
 }
 
 function draw() { renderBar(); renderLayers(); renderPanel(); firstPaint = false; }

@@ -9,10 +9,10 @@ window.SYSTEM_MAP = {
     sources: [
       { name: "AI 协作系统总架构", version: "v5.0", url: "https://app.notion.com/c52789ea0fc24051ad9fbe89d333dad2" },
       { name: "Agent 操作指南", version: "0.0.6", url: "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a" },
-      { name: "工作方法规划｜草案", version: "v0.6", url: "https://app.notion.com/410c7394815f816ab2e6d470fc89e748" },
+      { name: "工作方法｜第一期运行规则", version: "v1.1", url: "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965" },
       { name: "知识中心", version: "8 页", url: "https://app.notion.com/400c7394815f81d181eef3c3c4764461" },
       { name: "技能库", version: "19 个技能", url: "https://app.notion.com/3fcc7394815f80198359d76a9252e114" },
-      { name: "工作方法草案 · 附录 A 场景做法卡", version: "v0.9", url: "https://app.notion.com/410c7394815f816ab2e6d470fc89e748" },
+      { name: "工作场景做法卡｜草案 · 第 1 节场景", version: "v0.2", url: "https://app.notion.com/413c7394815f817b9c87c20d640258be" },
       { name: "工作场景做法卡｜草案 · 第 0 节全貌", version: "v0.2", url: "https://app.notion.com/413c7394815f817b9c87c20d640258be" }
     ]
   },
@@ -470,6 +470,60 @@ window.SYSTEM_MAP = {
       "每次试跑记一条「系统改进记录」（类型＝试跑）",
       "工作流转正：所含模块都已转正，再完整走通 1 次、无大改",
       "到期凑不够次数：在周复盘决定延期还是缩小范围"
+    ]
+  },
+
+  // 「开始使用」视图：概要。正本是「工作方法｜第一期运行规则」第 0 节，详细说明只写在那里。
+  start: {
+    source: { name: "工作方法｜第一期运行规则 · 第 0 节", url: "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965" },
+    intro: "接入新 Agent 时只做一次设置；之后 Agent 每次开场自己去 Notion 读，你不用手动贴资料。",
+    cards: [
+      {
+        id: "setup", name: "接入新 Agent", sub: "一次性：把三行指令放进平台",
+        role: "新平台第一次用时做一次。把下面三行放进它的平台指令，之后它每次开场都会自己读 Notion。",
+        rows: [
+          { k: "Claude Code", v: "~/.claude/AGENTS.md", tag: "已加" },
+          { k: "Codex", v: "~/.codex/AGENTS.md", tag: "已加" },
+          { k: "Claude 聊天", v: "账户 → Claude 指令", tag: "已加" },
+          { k: "Notion AI", v: "Notion 里的开场页", tag: "已加" },
+          { k: "Grokbot", v: "平台配置，第二期接入", tag: "待配置" }
+        ],
+        code: "1. 读写 Notion 前，先读「Agent 操作指南」：https://app.notion.com/p/40fc7394815f816f9b28de00176a3b0a\n2. 和 Tim 协作的方法（先查后问、证据卡、纠错、周复盘）以「工作方法｜第一期运行规则」为准：https://app.notion.com/p/413c7394815f8186a445d9ba7d5a7965\n3. 可复用或多步的工作，先查 Notion 技能库有没有对应技能，用之前读它的正文。",
+        codeTitle: "每个平台都放这三行"
+      },
+      {
+        id: "open", name: "每次开场", sub: "Agent 自己读，你不用贴", ordered: true,
+        role: "Agent 按这个顺序自己读。读不到 Notion 时会告诉你，不凭记忆或本地文件执行。",
+        rows: [
+          { k: "操作指南", v: "Agent 操作指南：怎么读写 Notion", url: "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a" },
+          { k: "运行规则", v: "工作方法｜第一期运行规则：怎么和你协作", url: "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965" },
+          { k: "About Tim", v: "About Tim，并按主题搜记忆" },
+          { k: "技能正文", v: "要用的技能正文" },
+          { k: "项目简报", v: "涉及某个项目时，读它的项目简报" }
+        ]
+      },
+      {
+        id: "daily", name: "日常使用", sub: "在哪做、怎么叫技能",
+        role: "用大白话说要做什么，Agent 选技能，并在回复第一行说明用的是哪个。",
+        rows: [
+          { k: "写方案、汇报、管项目", v: "Claude Code，固定在一个文件夹里开会话" },
+          { k: "页面里改一段、校对", v: "Notion AI，就地改；多轮问答的工作还是去 Claude Code" },
+          { k: "代码、原型、数据", v: "Claude Code 或 Codex" },
+          { k: "外部账号、后台运行", v: "Grokbot，经「派发任务卡」，只生成不发送" },
+          { k: "调用技能", v: "直接说要做什么；Claude Code 里也能输入英文标识，如 /draft-proposal" },
+          { k: "改技能", v: "只改 Notion 技能库的正文，立即生效；新建或改名后跑「同步技能」" }
+        ]
+      },
+      {
+        id: "project", name: "开新项目", sub: "项目简报是唯一背景", ordered: true,
+        role: "换会话、换 Agent 时不贴聊天记录，先把结论写回项目简报。",
+        rows: [
+          { k: "先判断", v: "先判断是不是项目：用「推进项目」按立项标准判断，不够格的写成文档" },
+          { k: "项目简报", v: "项目简报是唯一的背景来源：目标、现行决定、待决问题、资料索引都写在里面" },
+          { k: "文件夹", v: "要写代码、长期多会话时才单独开文件夹；CLAUDE.md 只放项目简报链接、运行规则链接和硬边界" },
+          { k: "开场", v: "新会话开场说「读一下 X 项目简报」就够" }
+        ]
+      }
     ]
   }
 };

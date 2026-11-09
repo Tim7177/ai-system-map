@@ -293,6 +293,7 @@ details a{color:var(--ac);text-decoration:none}
 .ed span{display:block;font-size:12px;color:var(--tx3);margin-top:2px}
 .ed i{display:block;font-style:normal;font-size:13px;color:var(--tx2);margin-top:4px}
 .foot{margin-top:16px;font-size:12px;color:var(--tx3);line-height:1.7}
+.snip{margin:8px 0 10px;padding:10px 12px;border:1px solid var(--line2);font:12px/1.7 Menlo,Consolas,monospace;color:var(--tx2);white-space:pre-wrap;word-break:break-all;user-select:all}   /* 两种风格用同一字体，换行才一致 */
 [data-theme="ink"] .gapn{border-radius:2px;border-color:var(--red);color:var(--red)}
 [data-theme="ink"] .sk{border-radius:2px}
 [data-theme="ink"] .sk:hover{color:var(--red);border-color:var(--red)}
@@ -399,7 +400,8 @@ const T = {
 let theme = document.documentElement.dataset.theme;
 let mode = null, step = 0, sel = null, showDraft = false, firstPaint = true;
 const qView = new URLSearchParams(location.search).get("view");
-let view = qView === "scene" && M.scenarios ? "scene" : qView === "wf" && M.workflows ? "wf" : "map", sc = 0, scStep = 0, scSkill = null;   // view: map 看结构 / scene 按场景 / wf 工作流全貌
+let view = qView === "scene" && M.scenarios ? "scene" : qView === "wf" && M.workflows ? "wf" : qView === "start" && M.start ? "start" : "map", sc = 0, scStep = 0, scSkill = null;   // view: map 看结构 / scene 按场景 / wf 工作流全貌 / start 开始使用
+let sti = 0;   // 开始使用：当前卡片序号
 let wfi = 0, wfMod = null;   // 工作流全貌：当前卡片序号、选中的模块编号
 
 const $ = id => document.getElementById(id);
@@ -468,7 +470,8 @@ function renderBar() {
   mk("看结构", view === "map" && mode === null, () => { view = "map"; mode = null; draw(); });
   if (M.scenarios) mk("按场景", view === "scene", () => { view = "scene"; mode = null; scSkill = null; draw(); });
   if (M.workflows) mk("工作流全貌", view === "wf", () => { view = "wf"; mode = null; wfMod = null; draw(); });
-  if (view === "scene" || view === "wf") return;
+  if (M.start) mk("开始使用", view === "start", () => { view = "start"; mode = null; draw(); });
+  if (view === "scene" || view === "wf" || view === "start") return;
   const sp = document.createElement("span"); sp.className = "sep"; bar.appendChild(sp);
   M.flows.forEach((f, i) => mk(f.name, mode === i, () => { mode = i; step = 0; sel = null; draw(); }));
   const lb = document.createElement("label"); lb.className = "tgl";
@@ -481,6 +484,7 @@ function renderBar() {
 function renderLayers() {
   if (view === "scene") return renderScenes();
   if (view === "wf") return renderWf();
+  if (view === "start") return renderStart();
   const box = $("layers"); box.innerHTML = "";
   const flow = mode !== null ? M.flows[mode] : null;
   const cur = flow ? flow.steps[step].layer : null;
@@ -534,6 +538,7 @@ function renderPanel() {
   const p = $("panel");
   if (view === "scene") return renderScenePanel(p);
   if (view === "wf") return renderWfPanel(p);
+  if (view === "start") return renderStartPanel(p);
   if (mode !== null) {
     const f = M.flows[mode], n = f.steps.length;
     p.innerHTML = '<p class="crumb">' + t().route(mode) + '</p><p class="pt">' + esc(f.name) + "</p>" +
@@ -552,6 +557,7 @@ function renderPanel() {
       '<div class="it"><span>点上方的路线，看一件事怎么在各层之间流动；左右方向键切换步骤</span></div>',
       '<div class="it"><span>点「按场景」，看每类工作怎么走、用哪些技能、还能怎么改进</span></div>',
       '<div class="it"><span>点「工作流全貌」，看有哪些工作流、由哪些模块串成，哪些模块还缺、先做哪个</span></div>',
+      '<div class="it"><span>第一次用、或要接入新的 Agent，点「开始使用」</span></div>',
       '<div class="it"><span>' + t().draftHint + "</span></div>",
       '<div class="it"><span>右上角的「风格」下拉菜单可以切换风格，会记住你的选择</span></div>']);
     return;
@@ -575,6 +581,13 @@ function renderPanel() {
 
 function go(d) { const n = M.flows[mode].steps.length; step = (step + d + n) % n; draw(); }
 document.addEventListener("keydown", e => {
+  if (view === "start") {
+    if (!$("themeList").hidden) return;
+    const n = M.start.cards.length;
+    if (e.key === "ArrowDown") { e.preventDefault(); sti = (sti + 1) % n; draw(); }
+    if (e.key === "ArrowUp") { e.preventDefault(); sti = (sti - 1 + n) % n; draw(); }
+    return;
+  }
   if (view === "wf") {
     if (!$("themeList").hidden) return;
     const n = wfDecks().length;
@@ -595,7 +608,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") go(1);
   if (e.key === "ArrowLeft") go(-1);
 });
-window.addEventListener("resize", () => placeProbe(view === "wf" ? (wfMod ? null : "wf-" + wfi) : view === "scene" ? "sc-" + M.scenarios[sc].id : mode !== null ? M.flows[mode].steps[step].layer : null));
+window.addEventListener("resize", () => placeProbe(view === "start" ? "st-" + M.start.cards[sti].id : view === "wf" ? (wfMod ? null : "wf-" + wfi) : view === "scene" ? "sc-" + M.scenarios[sc].id : mode !== null ? M.flows[mode].steps[step].layer : null));
 
 /* ---------- 按场景 ---------- */
 const skillLink = n => {
@@ -656,7 +669,7 @@ function renderScenePanel(p) {
   if (s.deliver) h += '<div class="rel"><b>' + (theme === "ink" ? "验收" : "DONE WHEN") + "</b>" + esc(s.deliver) + "</div>";
   if (s.edits) h += '<p class="sec">中途要改</p>' + itemsHtml(s.edits.map(e => '<div class="it ed"><b>' + esc(e.k) + "</b><span>" + esc(e.e) + "</span><i>" + esc(e.d) + "</i></div>"));
   if (s.gaps && s.gaps.length) h += '<p class="sec">还能怎么改进</p>' + itemsHtml(s.gaps.map(g => '<div class="it"><span>' + esc(g.t) + '</span><span class="tag' + (WARN_TAGS.includes(g.tag) ? " w" : "") + '">' + esc(g.tag) + "</span></div>"));
-  h += '<p class="foot">上下方向键换场景，左右方向键走步骤。场景流程的正本在工作方法草案附录 A，目前是草案；怎么改见附录 B。</p>';
+  h += '<p class="foot">上下方向键换场景，左右方向键走步骤。场景流程的正本在「工作场景做法卡｜草案」第 1 节，目前是草案；怎么改见第 2 节。</p>';
   p.innerHTML = h;
   p.querySelectorAll(".step").forEach(el => el.onclick = () => { scStep = +el.dataset.k; draw(); });
   bindSkills(p);
@@ -766,6 +779,43 @@ function renderWfPanel(p) {
       '<div class="rel"><b>验证</b>' + esc(tier.how) + "，" + esc(tier.period) + "。看：" + esc(tier.look) + "。</div>" + foot;
   }
   p.querySelectorAll("[data-m]").forEach(el => el.onclick = () => { wfMod = el.dataset.m; draw(); });
+}
+
+/* ---------- 开始使用 ---------- */
+function renderStart() {
+  const box = $("layers"); box.innerHTML = "";
+  const cs = M.start.cards;
+  cs.forEach((c, i) => {
+    const d = document.createElement("section");
+    d.className = "deck" + (i === sti ? " hi" : "") + (firstPaint ? "" : " settled");
+    d.dataset.layer = "st-" + c.id;
+    if (firstPaint) d.style.animationDelay = (i * 0.1) + "s";
+    d.innerHTML = '<div><div class="idx">' + t().idx(i, cs.length) + '</div><button class="ln"><b>' + esc(c.name) + "</b><span>" + esc(c.sub) + '</span></button></div><div class="chips"></div>';
+    d.querySelector(".ln").onclick = () => { sti = i; draw(); };
+    const chips = d.querySelector(".chips");
+    c.rows.forEach((r, j) => {
+      const b = document.createElement("button");
+      b.className = "chip" + (firstPaint ? "" : " settled") + (WARN_TAGS.includes(r.tag) ? " draft" : "");
+      b.textContent = (c.ordered ? (j + 1) + " " : "") + r.k;
+      if (firstPaint) b.style.animationDelay = (0.3 + i * 0.1 + j * 0.05) + "s";
+      b.onclick = () => { sti = i; draw(); };
+      chips.appendChild(b);
+    });
+    box.appendChild(d);
+  });
+  placeProbe("st-" + cs[sti].id);
+}
+function renderStartPanel(p) {
+  const S = M.start, c = S.cards[sti];
+  let h = '<p class="crumb">开始使用 · ' + (sti + 1) + " / " + S.cards.length + '</p><p class="pt">' + esc(c.name) + '</p><p class="role">' + esc(c.role) + "</p>" +
+    c.rows.map((r, k) => '<div class="step"><span class="ly">' + (c.ordered ? (k + 1) + " · " : "") + esc(r.k) + '</span><span class="sb"><span>' +
+      (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.v) + " ↗</a>" : esc(r.v)) +
+      (r.tag ? ' <span class="tag' + (WARN_TAGS.includes(r.tag) ? " w" : " ok") + '">' + esc(r.tag) + "</span>" : "") + "</span></span></div>").join("");
+  if (c.code) h += '<p class="sec">' + esc(c.codeTitle) + '</p><pre class="snip">' + esc(c.code) + '</pre><button class="btn" id="cp">复制这三行</button>';
+  h += '<div class="rel"><b>详细说明</b><a href="' + esc(S.source.url) + '" target="_blank" rel="noopener">' + esc(S.source.name) + " ↗</a></div>";
+  h += '<p class="foot">' + esc(S.intro) + "本页只放概要，以 Notion 为准；上下方向键换卡片。</p>";
+  p.innerHTML = h;
+  if (c.code) $("cp").onclick = () => navigator.clipboard.writeText(c.code).then(() => { $("cp").textContent = "已复制"; }, () => { $("cp").textContent = "复制失败，请手动选中上面的文字"; });
 }
 
 function draw() { renderBar(); renderLayers(); renderPanel(); firstPaint = false; }

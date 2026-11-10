@@ -10,37 +10,37 @@ window.SYSTEM_MAP = {
       {
         "name": "工作守则",
         "version": "v2.0",
-        "url": "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965"
+        "url": "https://app.notion.com/p/413c7394815f8186a445d9ba7d5a7965"
       },
       {
         "name": "工作模块清单",
         "version": "v1.0",
-        "url": "https://app.notion.com/414c7394815f815f8923d81424d50c85"
+        "url": "https://app.notion.com/p/414c7394815f815f8923d81424d50c85"
       },
       {
         "name": "给 Tim：操作说明",
         "version": "2026-11-10",
-        "url": "https://app.notion.com/414c7394815f81ca8ed7da189e01118b"
+        "url": "https://app.notion.com/p/414c7394815f81ca8ed7da189e01118b"
       },
       {
         "name": "Agent 操作指南",
         "version": "0.0.6",
-        "url": "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a"
+        "url": "https://app.notion.com/p/40fc7394815f816f9b28de00176a3b0a"
       },
       {
         "name": "知识中心",
         "version": "16 页生效",
-        "url": "https://app.notion.com/400c7394815f81d181eef3c3c4764461"
+        "url": "https://app.notion.com/p/400c7394815f81d181eef3c3c4764461"
       },
       {
         "name": "技能库",
         "version": "19 个技能",
-        "url": "https://app.notion.com/3fcc7394815f80198359d76a9252e114"
+        "url": "https://app.notion.com/p/3fcc7394815f80198359d76a9252e114"
       },
       {
         "name": "修订记录",
         "version": "截至 2026-11-10",
-        "url": "https://app.notion.com/e3919d7654ff4dd0a401cd4729c18df9"
+        "url": "https://app.notion.com/p/e3919d7654ff4dd0a401cd4729c18df9"
       }
     ]
   },
@@ -147,7 +147,7 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "v2.0 · 生效 · 开场必读：架构、协作方法、纠错、收尾",
-              "url": "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965"
+              "url": "https://app.notion.com/p/413c7394815f8186a445d9ba7d5a7965"
             }
           ]
         },
@@ -156,7 +156,7 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "v1.4 · 生效 · 开场必读",
-              "url": "https://app.notion.com/ddf815cb4af545ee8cd3d56105b54a09"
+              "url": "https://app.notion.com/p/ddf815cb4af545ee8cd3d56105b54a09"
             }
           ]
         },
@@ -165,7 +165,7 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "0.0.6 · 生效 · 写 Notion 前读",
-              "url": "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a"
+              "url": "https://app.notion.com/p/40fc7394815f816f9b28de00176a3b0a"
             }
           ]
         },
@@ -174,7 +174,7 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "v1.0 · 生效 · 新增、打磨工作模块或按工作流做事时读",
-              "url": "https://app.notion.com/414c7394815f815f8923d81424d50c85"
+              "url": "https://app.notion.com/p/414c7394815f815f8923d81424d50c85"
             }
           ]
         },
@@ -183,11 +183,11 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "任务流转规则 · 外派时读",
-              "url": "https://app.notion.com/482774e3d44a4c2f9743a08ed2859044"
+              "url": "https://app.notion.com/p/482774e3d44a4c2f9743a08ed2859044"
             },
             {
               "t": "Grokbot 配置说明 · 执行端读",
-              "url": "https://app.notion.com/9394362037894103870323cb03094180"
+              "url": "https://app.notion.com/p/9394362037894103870323cb03094180"
             }
           ]
         },
@@ -196,7 +196,7 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "延后事项和扩展点，开场不读",
-              "url": "https://app.notion.com/414c7394815f8136a63bee2093ef57d9"
+              "url": "https://app.notion.com/p/414c7394815f8136a63bee2093ef57d9"
             }
           ]
         }
@@ -215,29 +215,29 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "起草方案",
-              "url": "https://app.notion.com/84b4d749ebe940ada234417eb5256cee"
+              "url": "https://app.notion.com/p/84b4d749ebe940ada234417eb5256cee"
             },
             {
               "t": "推进项目",
-              "url": "https://app.notion.com/9d6f37f700cb4dca867f3144e0370015"
+              "url": "https://app.notion.com/p/9d6f37f700cb4dca867f3144e0370015"
             },
             {
               "t": "派发任务卡",
-              "url": "https://app.notion.com/3fcc7394815f813b855ec1c458769a89",
+              "url": "https://app.notion.com/p/3fcc7394815f813b855ec1c458769a89",
               "tag": "仅手动"
             },
             {
               "t": "游戏方案编译器",
-              "url": "https://app.notion.com/df88652d49e14ee4a78ab66e7bf39df3"
+              "url": "https://app.notion.com/p/df88652d49e14ee4a78ab66e7bf39df3"
             },
             {
               "t": "同步技能",
-              "url": "https://app.notion.com/40ec7394815f819486ece610963f061f",
+              "url": "https://app.notion.com/p/40ec7394815f819486ece610963f061f",
               "tag": "仅手动"
             },
             {
               "t": "更新系统地图",
-              "url": "https://app.notion.com/410c7394815f81559af6dabee5034225",
+              "url": "https://app.notion.com/p/410c7394815f81559af6dabee5034225",
               "tag": "Agent 专用"
             }
           ]
@@ -247,20 +247,20 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "起草汇报",
-              "url": "https://app.notion.com/317c7394815f8051bf90e7f7c51ff51c"
+              "url": "https://app.notion.com/p/317c7394815f8051bf90e7f7c51ff51c"
             },
             {
               "t": "PPT · 大纲格式调整",
-              "url": "https://app.notion.com/31299f7373434fb9876ec691835cddac"
+              "url": "https://app.notion.com/p/31299f7373434fb9876ec691835cddac"
             },
             {
               "t": "PPT · 文档生成",
-              "url": "https://app.notion.com/cf36cd02e7e6435e8431153968d252f5",
+              "url": "https://app.notion.com/p/cf36cd02e7e6435e8431153968d252f5",
               "tag": "仅手动"
             },
             {
               "t": "规范方案与汇报文档",
-              "url": "https://app.notion.com/bb27d96b82fa4ba18d14146f8726fa8d"
+              "url": "https://app.notion.com/p/bb27d96b82fa4ba18d14146f8726fa8d"
             }
           ]
         },
@@ -269,19 +269,19 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "改进写作",
-              "url": "https://app.notion.com/317c7394815f8123959eea73d1bd1432"
+              "url": "https://app.notion.com/p/317c7394815f8123959eea73d1bd1432"
             },
             {
               "t": "校对",
-              "url": "https://app.notion.com/317c7394815f81deb91ad5a49dc7eb8c"
+              "url": "https://app.notion.com/p/317c7394815f81deb91ad5a49dc7eb8c"
             },
             {
               "t": "重排格式",
-              "url": "https://app.notion.com/317c7394815f81728d4be4a3c38b9d00"
+              "url": "https://app.notion.com/p/317c7394815f81728d4be4a3c38b9d00"
             },
             {
               "t": "解释",
-              "url": "https://app.notion.com/317c7394815f81b6a73ccac2df70faea",
+              "url": "https://app.notion.com/p/317c7394815f81b6a73ccac2df70faea",
               "tag": "仅手动"
             }
           ]
@@ -291,16 +291,16 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "商业点子探矿",
-              "url": "https://app.notion.com/cd0260a816584400959e754793c75395"
+              "url": "https://app.notion.com/p/cd0260a816584400959e754793c75395"
             },
             {
               "t": "形态分析法 · 创意发散",
-              "url": "https://app.notion.com/fa9f1d8c07724a7d91cf0692d587bf5a",
+              "url": "https://app.notion.com/p/fa9f1d8c07724a7d91cf0692d587bf5a",
               "tag": "仅手动"
             },
             {
               "t": "全网需求探测 · 搜索翻译官",
-              "url": "https://app.notion.com/197f8af04e9846edaa4ee213bf5598da"
+              "url": "https://app.notion.com/p/197f8af04e9846edaa4ee213bf5598da"
             }
           ]
         },
@@ -309,12 +309,12 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "纵横",
-              "url": "https://app.notion.com/ede953cd27324937bf6cab9dad978c6a",
+              "url": "https://app.notion.com/p/ede953cd27324937bf6cab9dad978c6a",
               "tag": "仅手动"
             },
             {
               "t": "创建 Notion 技能",
-              "url": "https://app.notion.com/764274dda42a4630aab16b865ba1f070"
+              "url": "https://app.notion.com/p/764274dda42a4630aab16b865ba1f070"
             }
           ]
         }
@@ -344,7 +344,7 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "Tim · 个人档案",
-              "url": "https://app.notion.com/7b0441dcd91f48808c79c0abef183aff"
+              "url": "https://app.notion.com/p/7b0441dcd91f48808c79c0abef183aff"
             }
           ]
         },
@@ -353,11 +353,11 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "Memories 库",
-              "url": "https://app.notion.com/401c7394815f81c489ebe39613e34e11"
+              "url": "https://app.notion.com/p/401c7394815f81c489ebe39613e34e11"
             },
             {
               "t": "About Tim 摘要页",
-              "url": "https://app.notion.com/401c7394815f813f8f85f6c6a236a809"
+              "url": "https://app.notion.com/p/401c7394815f813f8f85f6c6a236a809"
             }
           ]
         },
@@ -366,11 +366,11 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "修订记录：所有系统页面和技能的改动历史，平时不读",
-              "url": "https://app.notion.com/e3919d7654ff4dd0a401cd4729c18df9"
+              "url": "https://app.notion.com/p/e3919d7654ff4dd0a401cd4729c18df9"
             },
             {
               "t": "系统改进记录：只记纠错",
-              "url": "https://app.notion.com/fa84d30389fd43ea8d35a333e9ee3214"
+              "url": "https://app.notion.com/p/fa84d30389fd43ea8d35a333e9ee3214"
             }
           ]
         },
@@ -379,11 +379,11 @@ window.SYSTEM_MAP = {
           "items": [
             {
               "t": "任务看板",
-              "url": "https://app.notion.com/28bbaa669cce40d19d474e8d7c45b81d"
+              "url": "https://app.notion.com/p/28bbaa669cce40d19d474e8d7c45b81d"
             },
             {
               "t": "工作流库（执行端）",
-              "url": "https://app.notion.com/061b62c136d54595a8ffc19779d4fbb2"
+              "url": "https://app.notion.com/p/061b62c136d54595a8ffc19779d4fbb2"
             }
           ]
         },
@@ -529,107 +529,107 @@ window.SYSTEM_MAP = {
   ],
   "skills": {
     "起草方案": {
-      "url": "https://app.notion.com/84b4d749ebe940ada234417eb5256cee",
+      "url": "https://app.notion.com/p/84b4d749ebe940ada234417eb5256cee",
       "call": "自动",
       "cmd": "/起草方案",
       "use": "把想法起草成 v0.1 方案，支持整体规划、产品、运营、营销、商业、评审与决策 6 类，写入文档库"
     },
     "起草汇报": {
-      "url": "https://app.notion.com/317c7394815f8051bf90e7f7c51ff51c",
+      "url": "https://app.notion.com/p/317c7394815f8051bf90e7f7c51ff51c",
       "call": "自动",
       "cmd": "/起草汇报",
       "use": "先读上期汇报、会议、项目简报，再起草周报、月报、季报或专项汇报 v0.1"
     },
     "推进项目": {
-      "url": "https://app.notion.com/9d6f37f700cb4dca867f3144e0370015",
+      "url": "https://app.notion.com/p/9d6f37f700cb4dca867f3144e0370015",
       "call": "自动",
       "cmd": "/推进项目",
       "use": "立项、更新项目简报、记项目决定、列同步清单、结项"
     },
     "派发任务卡": {
-      "url": "https://app.notion.com/3fcc7394815f813b855ec1c458769a89",
+      "url": "https://app.notion.com/p/3fcc7394815f813b855ec1c458769a89",
       "call": "仅手动",
       "use": "把要外部成品的任务写成任务卡交给 Grokbot；先判断能不能在对话里直接做"
     },
     "商业点子探矿": {
-      "url": "https://app.notion.com/cd0260a816584400959e754793c75395",
+      "url": "https://app.notion.com/p/cd0260a816584400959e754793c75395",
       "call": "自动",
       "cmd": "@探矿",
       "use": "用 YC 方法挖候选、筛掉伪机会、10 问打分，产出商业方案要点"
     },
     "形态分析法 · 创意发散": {
-      "url": "https://app.notion.com/fa9f1d8c07724a7d91cf0692d587bf5a",
+      "url": "https://app.notion.com/p/fa9f1d8c07724a7d91cf0692d587bf5a",
       "call": "仅手动",
       "cmd": "@形态",
       "use": "用形态矩阵系统发散、组合创意，产出创意卡"
     },
     "游戏方案编译器": {
-      "url": "https://app.notion.com/df88652d49e14ee4a78ab66e7bf39df3",
+      "url": "https://app.notion.com/p/df88652d49e14ee4a78ab66e7bf39df3",
       "call": "自动",
       "cmd": "@游戏策划",
       "use": "把游戏想法编译成 Codex 能开工的方案，写入游戏专案库"
     },
     "全网需求探测 · 搜索翻译官": {
-      "url": "https://app.notion.com/197f8af04e9846edaa4ee213bf5598da",
+      "url": "https://app.notion.com/p/197f8af04e9846edaa4ee213bf5598da",
       "call": "自动",
       "cmd": "@全网探测",
       "use": "把中文调研需求转成 Reddit、X、YouTube 等平台的英文关键词和搜索计划；不抓取、不分析"
     },
     "纵横": {
-      "url": "https://app.notion.com/ede953cd27324937bf6cab9dad978c6a",
+      "url": "https://app.notion.com/p/ede953cd27324937bf6cab9dad978c6a",
       "call": "仅手动",
       "cmd": "@纵横",
       "use": "拆解职场人际困局，给 2–3 条附话术和风险的策略；不用于业务方案"
     },
     "PPT · 大纲格式调整": {
-      "url": "https://app.notion.com/31299f7373434fb9876ec691835cddac",
+      "url": "https://app.notion.com/p/31299f7373434fb9876ec691835cddac",
       "call": "自动",
       "use": "把文档转成逐页 PPT 大纲：标题、正文、布局、解说词"
     },
     "PPT · 文档生成": {
-      "url": "https://app.notion.com/cf36cd02e7e6435e8431153968d252f5",
+      "url": "https://app.notion.com/p/cf36cd02e7e6435e8431153968d252f5",
       "call": "仅手动",
       "use": "把逐页大纲转成交给 Codex 生成 .pptx 的指令"
     },
     "规范方案与汇报文档": {
-      "url": "https://app.notion.com/bb27d96b82fa4ba18d14146f8726fa8d",
+      "url": "https://app.notion.com/p/bb27d96b82fa4ba18d14146f8726fa8d",
       "call": "自动",
       "use": "整理已有文档的分类、属性、命名，导出 PDF、腾讯文档"
     },
     "改进写作": {
-      "url": "https://app.notion.com/317c7394815f8123959eea73d1bd1432",
+      "url": "https://app.notion.com/p/317c7394815f8123959eea73d1bd1432",
       "call": "自动",
       "use": "润色改写，提升表达、结构和流畅度"
     },
     "校对": {
-      "url": "https://app.notion.com/317c7394815f81deb91ad5a49dc7eb8c",
+      "url": "https://app.notion.com/p/317c7394815f81deb91ad5a49dc7eb8c",
       "call": "自动",
       "use": "只改错别字、语法、标点"
     },
     "重排格式": {
-      "url": "https://app.notion.com/317c7394815f81728d4be4a3c38b9d00",
+      "url": "https://app.notion.com/p/317c7394815f81728d4be4a3c38b9d00",
       "call": "自动",
       "use": "只调标题、列表、分段，不动文字"
     },
     "解释": {
-      "url": "https://app.notion.com/317c7394815f81b6a73ccac2df70faea",
+      "url": "https://app.notion.com/p/317c7394815f81b6a73ccac2df70faea",
       "call": "仅手动",
       "use": "在聊天里用大白话解释选中的词或概念"
     },
     "创建 Notion 技能": {
-      "url": "https://app.notion.com/764274dda42a4630aab16b865ba1f070",
+      "url": "https://app.notion.com/p/764274dda42a4630aab16b865ba1f070",
       "call": "自动",
       "cmd": "@建技能",
       "use": "新建技能，或改写、体检现有技能的名称和描述"
     },
     "同步技能": {
-      "url": "https://app.notion.com/40ec7394815f819486ece610963f061f",
+      "url": "https://app.notion.com/p/40ec7394815f819486ece610963f061f",
       "call": "仅手动",
       "cmd": "/sync-skills",
       "use": "给 Claude Code、Codex 生成本地技能指针"
     },
     "更新系统地图": {
-      "url": "https://app.notion.com/410c7394815f81559af6dabee5034225",
+      "url": "https://app.notion.com/p/410c7394815f81559af6dabee5034225",
       "call": "Agent 专用",
       "use": "从 Notion 回读，更新这张地图"
     }
@@ -713,7 +713,7 @@ window.SYSTEM_MAP = {
       "status": "手工版",
       "io": "目标、资源、截止日 → 里程碑、排期、负责人、依赖，写进项目简报",
       "skills": [],
-      "url": "https://app.notion.com/414c7394815f8192a727e88672cf329a"
+      "url": "https://app.notion.com/p/414c7394815f8192a727e88672cf329a"
     },
     {
       "id": "M09",
@@ -951,7 +951,7 @@ window.SYSTEM_MAP = {
   "start": {
     "source": {
       "name": "给 Tim：操作说明",
-      "url": "https://app.notion.com/414c7394815f81ca8ed7da189e01118b"
+      "url": "https://app.notion.com/p/414c7394815f81ca8ed7da189e01118b"
     },
     "intro": "接入新 Agent 时只做一次设置；之后 Agent 每次开场自己去 Notion 读，你不用手动贴资料。",
     "cards": [
@@ -1000,17 +1000,17 @@ window.SYSTEM_MAP = {
           {
             "k": "工作守则",
             "v": "系统架构，怎么和你协作",
-            "url": "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965"
+            "url": "https://app.notion.com/p/413c7394815f8186a445d9ba7d5a7965"
           },
           {
             "k": "Tim 偏好",
             "v": "做事方式",
-            "url": "https://app.notion.com/ddf815cb4af545ee8cd3d56105b54a09"
+            "url": "https://app.notion.com/p/ddf815cb4af545ee8cd3d56105b54a09"
           },
           {
             "k": "写 Notion 前",
             "v": "Agent 操作指南",
-            "url": "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a"
+            "url": "https://app.notion.com/p/40fc7394815f816f9b28de00176a3b0a"
           },
           {
             "k": "涉及项目时",
@@ -1136,7 +1136,7 @@ window.SYSTEM_MAP = {
         "role": "一次打磨一个。第一批是 M08 规划拆解、M09 项目周检、M05 业务评审。",
         "source": {
           "name": "工作模块清单 · 第 4 节",
-          "url": "https://app.notion.com/414c7394815f815f8923d81424d50c85"
+          "url": "https://app.notion.com/p/414c7394815f815f8923d81424d50c85"
         },
         "rows": [
           {
@@ -1166,14 +1166,14 @@ window.SYSTEM_MAP = {
   "changes": {
     "source": {
       "name": "修订记录",
-      "url": "https://app.notion.com/e3919d7654ff4dd0a401cd4729c18df9"
+      "url": "https://app.notion.com/p/e3919d7654ff4dd0a401cd4729c18df9"
     },
     "list": [
       {
         "date": "2026-11-10",
         "title": "系统精简为确定版 v1",
         "version": "工作守则 v2.0 · 工作模块清单 v1.0",
-        "url": "https://app.notion.com/414c7394815f812781a1fdfa0507120c",
+        "url": "https://app.notion.com/p/414c7394815f812781a1fdfa0507120c",
         "points": [
           "开场只读工作守则和 Tim 偏好，其余按需读；Agent 操作指南改为写 Notion 前读",
           "运行规则在原页改写为「工作守则」：加入架构，去掉试行和第二期标注、试跑与转正",
@@ -1187,7 +1187,7 @@ window.SYSTEM_MAP = {
         "date": "2026-11-10",
         "title": "系统地图改为 4 个视图",
         "version": "更新系统地图（技能）",
-        "url": "https://app.notion.com/414c7394815f8196b934ecab95f08376",
+        "url": "https://app.notion.com/p/414c7394815f8196b934ecab95f08376",
         "points": [
           "视图改为：架构、工作模块与工作流、开始使用、更新记录；去掉旧的「按场景」",
           "「开始使用」改从「给 Tim：操作说明」生成，新增「你说什么」口令表",

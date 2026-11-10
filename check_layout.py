@@ -11,15 +11,15 @@ import html, json, os, re, subprocess, sys, tempfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 CHROME = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
 WIDTHS = [1440, 1024, 760]
-VIEWS = ["home", "flow", "scene", "layer", "wf", "start"]
+VIEWS = ["home", "flow", "layer", "wf", "start", "log"]
 
 PROBE = """<script>
 setTimeout(() => {
   const a = location.hash.slice(1);
   const btn = t => [...document.querySelectorAll('button')].find(b => b.textContent.trim() === t);
   if (a === 'flow') { btn('一次任务怎么走').click(); document.getElementById('nx').click(); }
-  if (a === 'scene' && btn('按场景')) btn('按场景').click();
-  if (a === 'wf' && btn('工作流全貌')) btn('工作流全貌').click();
+  if (a === 'wf' && btn('工作模块与工作流')) btn('工作模块与工作流').click();
+  if (a === 'log' && btn('更新记录')) btn('更新记录').click();
   if (a === 'start' && btn('开始使用')) btn('开始使用').click();
   if (a === 'layer') [...document.querySelectorAll('.ln')][2].click();
   const box = el => { let x = 0, y = 0, e = el; while (e) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; }

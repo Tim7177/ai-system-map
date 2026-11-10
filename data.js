@@ -4,564 +4,1195 @@
 // 条目标签 tag 只用这几种：草案、待建、待配置、仅手动、Agent 专用、停用、待核实。
 
 window.SYSTEM_MAP = {
-  meta: {
-    generated: "2026-11-07",
-    sources: [
-      { name: "AI 协作系统总架构", version: "v5.0", url: "https://app.notion.com/c52789ea0fc24051ad9fbe89d333dad2" },
-      { name: "Agent 操作指南", version: "0.0.6", url: "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a" },
-      { name: "工作方法｜第一期运行规则", version: "v1.1", url: "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965" },
-      { name: "知识中心", version: "8 页", url: "https://app.notion.com/400c7394815f81d181eef3c3c4764461" },
-      { name: "技能库", version: "19 个技能", url: "https://app.notion.com/3fcc7394815f80198359d76a9252e114" },
-      { name: "工作场景做法卡｜草案 · 第 1 节场景", version: "v0.2", url: "https://app.notion.com/413c7394815f817b9c87c20d640258be" },
-      { name: "工作场景做法卡｜草案 · 第 0 节全貌", version: "v0.2", url: "https://app.notion.com/413c7394815f817b9c87c20d640258be" }
+  "meta": {
+    "generated": "2026-11-10",
+    "sources": [
+      {
+        "name": "工作守则",
+        "version": "v2.0",
+        "url": "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965"
+      },
+      {
+        "name": "工作模块清单",
+        "version": "v1.0",
+        "url": "https://app.notion.com/414c7394815f815f8923d81424d50c85"
+      },
+      {
+        "name": "给 Tim：操作说明",
+        "version": "2026-11-10",
+        "url": "https://app.notion.com/414c7394815f81ca8ed7da189e01118b"
+      },
+      {
+        "name": "Agent 操作指南",
+        "version": "0.0.6",
+        "url": "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a"
+      },
+      {
+        "name": "知识中心",
+        "version": "16 页生效",
+        "url": "https://app.notion.com/400c7394815f81d181eef3c3c4764461"
+      },
+      {
+        "name": "技能库",
+        "version": "19 个技能",
+        "url": "https://app.notion.com/3fcc7394815f80198359d76a9252e114"
+      },
+      {
+        "name": "修订记录",
+        "version": "截至 2026-11-10",
+        "url": "https://app.notion.com/e3919d7654ff4dd0a401cd4729c18df9"
+      }
     ]
   },
-
-  layers: [
+  "layers": [
     {
-      id: "d",
-      name: "决策层",
-      sub: "Tim",
-      role: "定方向、拍板、验收。系统里所有不可撤回的动作都停在这一层。",
-      up: null,
-      down: "向执行层下需求；只回答 Agent 列出的决策题。",
-      modules: [
-        { name: "提案", items: [{ t: "提出想法和需求，Agent 帮着起草" }] },
-        { name: "拍板", items: [
-          { t: "只回答 Agent 列出的决策题，每题附推荐答案" },
-          { t: "改规则、建库、建定时任务都要当次同意，一次同意只管一次" }
-        ] },
-        { name: "验收", items: [
-          { t: "现在：读全文判断" },
-          { t: "第一期目标：只看证据卡就能判断，够用率 ≥ 80%", tag: "草案" }
-        ] },
-        { name: "永远人工", items: [{ t: "外发、删除、对外承诺、花钱" }] }
+      "id": "d",
+      "name": "决策层",
+      "sub": "Tim",
+      "role": "给目标、拍板、看证据卡验收。外发、删除、对外承诺都停在这一层，由 Tim 亲手按。",
+      "up": null,
+      "down": "用大白话对思考大脑说要做什么；只回答要拍板的事。",
+      "modules": [
+        {
+          "name": "给目标",
+          "items": [
+            {
+              "t": "用大白话说要做什么，不用记技能名"
+            }
+          ]
+        },
+        {
+          "name": "拍板",
+          "items": [
+            {
+              "t": "只回答要拍板的事，每问附推荐答案，回「是」即采纳"
+            },
+            {
+              "t": "改生效页、建库、建定时任务都要当次同意，一次同意只管一次"
+            }
+          ]
+        },
+        {
+          "name": "验收",
+          "items": [
+            {
+              "t": "看证据卡判断，不读全文"
+            }
+          ]
+        },
+        {
+          "name": "永远人工",
+          "items": [
+            {
+              "t": "外发、删除、对外承诺"
+            }
+          ]
+        }
       ]
     },
     {
-      id: "e",
-      name: "执行层",
-      sub: "谁来干活",
-      role: "接需求、动手做、交付。每次会话先读规则层，再调用技能层，最后读写资料层。",
-      up: "交付成果给 Tim，附证据卡。",
-      down: "读规则、调技能、读写资料。",
-      modules: [
-        { name: "对话类 Agent", items: [
-          { t: "Claude Code、Claude、贾维斯（Notion AI）、Codex" },
-          { t: "主力通道：直接读写 Notion，不经任务卡" }
-        ] },
-        { name: "Grokbot", items: [
-          { t: "外派通道：经任务看板派卡", url: "https://app.notion.com/28bbaa669cce40d19d474e8d7c45b81d" },
-          { t: "负责外部成品，只生成不发送" }
-        ] },
-        { name: "定时与自动化", items: [
-          { t: "Daily Notion memory and setup check：每天 20:58 同步记忆、检查指南版本" },
-          { t: "在云端执行，不在本机；以后加对账要按云端任务改" },
-          { t: "方案回填（Notion 自定义 Agent）", tag: "待配置" }
-        ] }
+      "id": "e",
+      "name": "执行层",
+      "sub": "谁来干活",
+      "role": "思考大脑负责想清楚、再派出去；执行触手动手做，只生成不发送。",
+      "up": "交付成果给 Tim，附证据卡；收尾问「要不要沉淀」。",
+      "down": "读规则、调技能、读写资料。",
+      "modules": [
+        {
+          "name": "思考大脑",
+          "items": [
+            {
+              "t": "Claude Code：对话、先查后问、规划拆解、选技能、派活"
+            },
+            {
+              "t": "回复第一行说明这次用哪个技能"
+            }
+          ]
+        },
+        {
+          "name": "执行触手",
+          "items": [
+            {
+              "t": "Codex：写代码、做原型和成品"
+            },
+            {
+              "t": "外派平台：登录外部平台、后台定时；只生成，不发送"
+            },
+            {
+              "t": "外派平台二选一（Grokbot 或 Hermes）",
+              "tag": "待核实"
+            }
+          ]
+        },
+        {
+          "name": "就地修改",
+          "items": [
+            {
+              "t": "Notion AI：已在 Notion 页面里只改一段时用"
+            }
+          ]
+        }
       ]
     },
     {
-      id: "r",
-      name: "规则层",
-      sub: "按什么规矩",
-      role: "规定 Agent 怎么读、怎么写、什么不能做。只有状态为「生效」的页面才算数。",
-      up: "约束执行层的每一步。",
-      down: "规定资料放哪、技能怎么建。",
-      modules: [
-        { name: "Agent 操作指南", items: [
-          { t: "0.0.6 · 生效 · 所有 Agent 每次会话读一次", url: "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a" },
-          { t: "管位置、分层、读写顺序、新建、边界、遗忘、核验" }
-        ] },
-        { name: "Tim 偏好", items: [
-          { t: "v1.4 · 生效 · 所有 Agent", url: "https://app.notion.com/ddf815cb4af545ee8cd3d56105b54a09" }
-        ] },
-        { name: "任务流转规则", items: [
-          { t: "v2.0 · 生效 · 只在外派时读", url: "https://app.notion.com/482774e3d44a4c2f9743a08ed2859044" }
-        ] },
-        { name: "Grokbot 配置说明", items: [
-          { t: "v2.3 · 生效 · 执行端读", url: "https://app.notion.com/9394362037894103870323cb03094180" }
-        ] },
-        { name: "总架构", items: [
-          { t: "v5.0 · 生效 · 只给 Tim 看的设计记录，Agent 不读", url: "https://app.notion.com/c52789ea0fc24051ad9fbe89d333dad2" }
-        ] },
-        { name: "工作方法草案", draft: true, items: [
-          { t: "v0.6 · 草案 · 只当资料，Tim 说「试跑」才用", url: "https://app.notion.com/410c7394815f816ab2e6d470fc89e748", tag: "草案" },
-          { t: "第一期：先查后问、证据卡、二次犯错就升级" }
-        ] },
-        { name: "工作流入库规范", items: [
-          { t: "停用，只作参考", url: "https://app.notion.com/cdada48573c643d4a843151d92f17a89", tag: "停用" }
-        ] }
+      "id": "r",
+      "name": "规则层",
+      "sub": "按什么规矩",
+      "role": "知识中心是所有 Agent 的入口。开场只读工作守则和 Tim 偏好，其余按需读；只按「生效」的页面执行。",
+      "up": "约束执行层的每一步。",
+      "down": "规定资料放哪、技能怎么建。",
+      "modules": [
+        {
+          "name": "工作守则",
+          "items": [
+            {
+              "t": "v2.0 · 生效 · 开场必读：架构、协作方法、纠错、收尾",
+              "url": "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965"
+            }
+          ]
+        },
+        {
+          "name": "Tim 偏好",
+          "items": [
+            {
+              "t": "v1.4 · 生效 · 开场必读",
+              "url": "https://app.notion.com/ddf815cb4af545ee8cd3d56105b54a09"
+            }
+          ]
+        },
+        {
+          "name": "Agent 操作指南",
+          "items": [
+            {
+              "t": "0.0.6 · 生效 · 写 Notion 前读",
+              "url": "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a"
+            }
+          ]
+        },
+        {
+          "name": "工作模块清单",
+          "items": [
+            {
+              "t": "v1.0 · 生效 · 新增、打磨工作模块或按工作流做事时读",
+              "url": "https://app.notion.com/414c7394815f815f8923d81424d50c85"
+            }
+          ]
+        },
+        {
+          "name": "外派规则",
+          "items": [
+            {
+              "t": "任务流转规则 · 外派时读",
+              "url": "https://app.notion.com/482774e3d44a4c2f9743a08ed2859044"
+            },
+            {
+              "t": "Grokbot 配置说明 · 执行端读",
+              "url": "https://app.notion.com/9394362037894103870323cb03094180"
+            }
+          ]
+        },
+        {
+          "name": "以后再说",
+          "items": [
+            {
+              "t": "延后事项和扩展点，开场不读",
+              "url": "https://app.notion.com/414c7394815f8136a63bee2093ef57d9"
+            }
+          ]
+        }
       ]
     },
     {
-      id: "k",
-      name: "技能层",
-      sub: "会做哪些事",
-      role: "可重复的做法。技能库是唯一正本，Claude Code、Codex 本地只放指针。",
-      up: "执行层接到需求时匹配技能，读正文后照做。",
-      down: "技能规定读哪些资料、写到哪里。",
-      modules: [
-        { name: "方案推进", items: [
-          { t: "起草方案", url: "https://app.notion.com/84b4d749ebe940ada234417eb5256cee" },
-          { t: "推进项目", url: "https://app.notion.com/9d6f37f700cb4dca867f3144e0370015" },
-          { t: "游戏方案编译器", url: "https://app.notion.com/df88652d49e14ee4a78ab66e7bf39df3" },
-          { t: "派发任务卡", url: "https://app.notion.com/3fcc7394815f813b855ec1c458769a89", tag: "仅手动" },
-          { t: "同步技能", url: "https://app.notion.com/40ec7394815f819486ece610963f061f", tag: "仅手动" },
-          { t: "更新系统地图", url: "https://app.notion.com/410c7394815f81559af6dabee5034225", tag: "Agent 专用" }
-        ] },
-        { name: "文档输出", items: [
-          { t: "起草汇报", url: "https://app.notion.com/317c7394815f8051bf90e7f7c51ff51c" },
-          { t: "规范方案与汇报文档", url: "https://app.notion.com/bb27d96b82fa4ba18d14146f8726fa8d" },
-          { t: "PPT · 大纲格式调整", url: "https://app.notion.com/31299f7373434fb9876ec691835cddac" },
-          { t: "PPT · 文档生成", url: "https://app.notion.com/cf36cd02e7e6435e8431153968d252f5", tag: "仅手动" }
-        ] },
-        { name: "写作编辑", items: [
-          { t: "改进写作", url: "https://app.notion.com/317c7394815f8123959eea73d1bd1432" },
-          { t: "重排格式", url: "https://app.notion.com/317c7394815f81728d4be4a3c38b9d00" },
-          { t: "校对", url: "https://app.notion.com/317c7394815f81deb91ad5a49dc7eb8c" },
-          { t: "解释", url: "https://app.notion.com/317c7394815f81b6a73ccac2df70faea", tag: "仅手动" }
-        ] },
-        { name: "创意调研", items: [
-          { t: "商业点子探矿", url: "https://app.notion.com/cd0260a816584400959e754793c75395" },
-          { t: "全网需求探测 · 搜索翻译官", url: "https://app.notion.com/197f8af04e9846edaa4ee213bf5598da" },
-          { t: "形态分析法 · 创意发散", url: "https://app.notion.com/fa9f1d8c07724a7d91cf0692d587bf5a", tag: "仅手动" }
-        ] },
-        { name: "职场与其他", items: [
-          { t: "纵横", url: "https://app.notion.com/ede953cd27324937bf6cab9dad978c6a", tag: "仅手动" },
-          { t: "创建 Notion 技能", url: "https://app.notion.com/764274dda42a4630aab16b865ba1f070" }
-        ] },
-        { name: "第一期改造", draft: true, items: [
-          { t: "起草方案、起草汇报、推进项目：加先查后问和证据卡", tag: "草案" },
-          { t: "C 线进度：草案里没有记录", tag: "待核实" }
-        ] }
+      "id": "k",
+      "name": "技能层",
+      "sub": "会做哪些事",
+      "role": "小、可组合的做法。技能库是唯一正本，Claude Code 本地只放指针。",
+      "up": "思考大脑接到需求时匹配技能，读正文后照做。",
+      "down": "技能规定读哪些资料、写到哪里。",
+      "modules": [
+        {
+          "name": "方案推进",
+          "items": [
+            {
+              "t": "起草方案",
+              "url": "https://app.notion.com/84b4d749ebe940ada234417eb5256cee"
+            },
+            {
+              "t": "推进项目",
+              "url": "https://app.notion.com/9d6f37f700cb4dca867f3144e0370015"
+            },
+            {
+              "t": "派发任务卡",
+              "url": "https://app.notion.com/3fcc7394815f813b855ec1c458769a89",
+              "tag": "仅手动"
+            },
+            {
+              "t": "游戏方案编译器",
+              "url": "https://app.notion.com/df88652d49e14ee4a78ab66e7bf39df3"
+            },
+            {
+              "t": "同步技能",
+              "url": "https://app.notion.com/40ec7394815f819486ece610963f061f",
+              "tag": "仅手动"
+            },
+            {
+              "t": "更新系统地图",
+              "url": "https://app.notion.com/410c7394815f81559af6dabee5034225",
+              "tag": "Agent 专用"
+            }
+          ]
+        },
+        {
+          "name": "文档输出",
+          "items": [
+            {
+              "t": "起草汇报",
+              "url": "https://app.notion.com/317c7394815f8051bf90e7f7c51ff51c"
+            },
+            {
+              "t": "PPT · 大纲格式调整",
+              "url": "https://app.notion.com/31299f7373434fb9876ec691835cddac"
+            },
+            {
+              "t": "PPT · 文档生成",
+              "url": "https://app.notion.com/cf36cd02e7e6435e8431153968d252f5",
+              "tag": "仅手动"
+            },
+            {
+              "t": "规范方案与汇报文档",
+              "url": "https://app.notion.com/bb27d96b82fa4ba18d14146f8726fa8d"
+            }
+          ]
+        },
+        {
+          "name": "写作编辑",
+          "items": [
+            {
+              "t": "改进写作",
+              "url": "https://app.notion.com/317c7394815f8123959eea73d1bd1432"
+            },
+            {
+              "t": "校对",
+              "url": "https://app.notion.com/317c7394815f81deb91ad5a49dc7eb8c"
+            },
+            {
+              "t": "重排格式",
+              "url": "https://app.notion.com/317c7394815f81728d4be4a3c38b9d00"
+            },
+            {
+              "t": "解释",
+              "url": "https://app.notion.com/317c7394815f81b6a73ccac2df70faea",
+              "tag": "仅手动"
+            }
+          ]
+        },
+        {
+          "name": "创意调研",
+          "items": [
+            {
+              "t": "商业点子探矿",
+              "url": "https://app.notion.com/cd0260a816584400959e754793c75395"
+            },
+            {
+              "t": "形态分析法 · 创意发散",
+              "url": "https://app.notion.com/fa9f1d8c07724a7d91cf0692d587bf5a",
+              "tag": "仅手动"
+            },
+            {
+              "t": "全网需求探测 · 搜索翻译官",
+              "url": "https://app.notion.com/197f8af04e9846edaa4ee213bf5598da"
+            }
+          ]
+        },
+        {
+          "name": "职场与其他",
+          "items": [
+            {
+              "t": "纵横",
+              "url": "https://app.notion.com/ede953cd27324937bf6cab9dad978c6a",
+              "tag": "仅手动"
+            },
+            {
+              "t": "创建 Notion 技能",
+              "url": "https://app.notion.com/764274dda42a4630aab16b865ba1f070"
+            }
+          ]
+        }
       ]
     },
     {
-      id: "c",
-      name: "资料层",
-      sub: "东西放哪",
-      role: "每类信息只有一处正本，别处只放链接。记忆成熟后上移到正本。",
-      up: "被执行层和技能读写。",
-      down: null,
-      modules: [
-        { name: "正式文档", items: [
-          { t: "KM 文档库", url: "https://app.notion.com/6eb7eaab6c84443db9a6f8ff947affa0" },
-          { t: "NT 文档库", url: "https://app.notion.com/5c3598c4b39444348a37b979fccd36a2" },
-          { t: "项目内容、决策和依据的唯一正本" }
-        ] },
-        { name: "个人档案", items: [
-          { t: "Tim · 个人档案：背景、目标、立项筛选器", url: "https://app.notion.com/7b0441dcd91f48808c79c0abef183aff" }
-        ] },
-        { name: "共享记忆", items: [
-          { t: "Notion Memory：Memories 库", url: "https://app.notion.com/401c7394815f81c489ebe39613e34e11" },
-          { t: "About Tim 摘要页", url: "https://app.notion.com/401c7394815f813f8f85f6c6a236a809" },
-          { t: "五类：Profile、Preference（待确认）、Work、People、Notes" },
-          { t: "成熟后上移到正本，只留指针" }
-        ] },
-        { name: "本地缓存", items: [
-          { t: "CLAUDE.md：只放链接、开场步骤、硬边界" },
-          { t: "平台自带记忆：不是正本，冲突以 Notion 为准" }
-        ] },
-        { name: "外派通道", items: [
-          { t: "任务看板", url: "https://app.notion.com/28bbaa669cce40d19d474e8d7c45b81d" },
-          { t: "工作流库", url: "https://app.notion.com/061b62c136d54595a8ffc19779d4fbb2" }
-        ] },
-        { name: "系统改进记录", draft: true, items: [
-          { t: "等 Tim 批准建库", tag: "待建" },
-          { t: "建库前先记在草案 9.1 过渡表", url: "https://app.notion.com/410c7394815f816ab2e6d470fc89e748" },
-          { t: "字段：类型、关联技能、错误类别、同类次数、升级动作、状态" }
-        ] }
+      "id": "c",
+      "name": "资料层",
+      "sub": "东西放哪",
+      "role": "每类信息只有一处正本，别处只放链接。",
+      "up": "被执行层和技能读写。",
+      "down": null,
+      "modules": [
+        {
+          "name": "项目和文档",
+          "items": [
+            {
+              "t": "项目简报：一个项目唯一的背景来源"
+            },
+            {
+              "t": "正式文档：方案、汇报、决策和依据"
+            }
+          ]
+        },
+        {
+          "name": "个人档案",
+          "items": [
+            {
+              "t": "Tim · 个人档案",
+              "url": "https://app.notion.com/7b0441dcd91f48808c79c0abef183aff"
+            }
+          ]
+        },
+        {
+          "name": "共享记忆",
+          "items": [
+            {
+              "t": "Memories 库",
+              "url": "https://app.notion.com/401c7394815f81c489ebe39613e34e11"
+            },
+            {
+              "t": "About Tim 摘要页",
+              "url": "https://app.notion.com/401c7394815f813f8f85f6c6a236a809"
+            }
+          ]
+        },
+        {
+          "name": "系统记录",
+          "items": [
+            {
+              "t": "修订记录：所有系统页面和技能的改动历史，平时不读",
+              "url": "https://app.notion.com/e3919d7654ff4dd0a401cd4729c18df9"
+            },
+            {
+              "t": "系统改进记录：只记纠错",
+              "url": "https://app.notion.com/fa84d30389fd43ea8d35a333e9ee3214"
+            }
+          ]
+        },
+        {
+          "name": "外派通道",
+          "items": [
+            {
+              "t": "任务看板",
+              "url": "https://app.notion.com/28bbaa669cce40d19d474e8d7c45b81d"
+            },
+            {
+              "t": "工作流库（执行端）",
+              "url": "https://app.notion.com/061b62c136d54595a8ffc19779d4fbb2"
+            }
+          ]
+        },
+        {
+          "name": "本地缓存",
+          "items": [
+            {
+              "t": "CLAUDE.md、AGENTS.md：只放链接、开场步骤、硬边界"
+            },
+            {
+              "t": "平台自带记忆：不是正本，冲突以 Notion 为准"
+            }
+          ]
+        }
       ]
     }
   ],
-
-  flows: [
+  "flows": [
     {
-      name: "一次任务怎么走",
-      steps: [
-        { layer: "d", text: "Tim 提出需求" },
-        { layer: "e", text: "Agent 接单，先读 Agent 操作指南" },
-        { layer: "k", text: "匹配技能，读技能正文" },
-        { layer: "c", text: "先查后问：读项目简报、会议、记忆，只问要拍板的事", tag: "草案" },
-        { layer: "e", text: "动手做；要外部成品时派卡给 Grokbot" },
-        { layer: "c", text: "写进 Notion：草稿或正式文档" },
-        { layer: "d", text: "交付附证据卡，Tim 看卡验收；外发由 Tim 来按", tag: "草案" }
+      "name": "一次任务怎么走",
+      "steps": [
+        {
+          "layer": "d",
+          "text": "Tim 用大白话说要做什么"
+        },
+        {
+          "layer": "r",
+          "text": "思考大脑开场读工作守则和 Tim 偏好"
+        },
+        {
+          "layer": "k",
+          "text": "选技能，第一行说明用哪个"
+        },
+        {
+          "layer": "c",
+          "text": "先查后问：读项目简报、会议、记忆，只问要拍板的事"
+        },
+        {
+          "layer": "e",
+          "text": "动手做；要外部成品时派给执行触手"
+        },
+        {
+          "layer": "c",
+          "text": "写进 Notion，结论写回项目简报"
+        },
+        {
+          "layer": "d",
+          "text": "交付附证据卡，Tim 看卡验收；外发由 Tim 来按"
+        },
+        {
+          "layer": "e",
+          "text": "收尾问一句「要不要沉淀成工作模块或技能」"
+        }
       ]
     },
     {
-      name: "遇到冲突听谁的",
-      steps: [
-        { layer: "d", text: "1. Tim 当前说的话，最优先" },
-        { layer: "c", text: "2. 任务卡（只在外派时）" },
-        { layer: "r", text: "3. 正本：规则、偏好" },
-        { layer: "c", text: "3. 正本：档案、正式文档" },
-        { layer: "c", text: "4. Notion Memory" },
-        { layer: "e", text: "5. 平台本地记忆，只是缓存" },
-        { layer: "d", text: "记忆成熟后：Tim 确认，上移到正本，记忆只留链接" }
+      "name": "遇到冲突听谁的",
+      "steps": [
+        {
+          "layer": "d",
+          "text": "1. Tim 当前说的话，最优先"
+        },
+        {
+          "layer": "c",
+          "text": "2. 任务卡（只在外派时）"
+        },
+        {
+          "layer": "r",
+          "text": "3. 正本：规则、偏好"
+        },
+        {
+          "layer": "c",
+          "text": "3. 正本：档案、正式文档"
+        },
+        {
+          "layer": "c",
+          "text": "4. Notion Memory"
+        },
+        {
+          "layer": "e",
+          "text": "5. 平台本地记忆，只是缓存"
+        }
       ]
     },
     {
-      name: "错误怎么变成改进",
-      steps: [
-        { layer: "d", text: "Tim 纠正产出", tag: "草案" },
-        { layer: "e", text: "Agent 先改好，再判断算不算纠错", tag: "草案" },
-        { layer: "c", text: "记一条系统改进记录，回复末尾告知「同类第 N 次」", tag: "草案" },
-        { layer: "e", text: "同类第 2 次：附升级建议", tag: "草案" },
-        { layer: "d", text: "Tim 批准", tag: "草案" },
-        { layer: "k", text: "优先改结构（模板、属性），其次加检查（技能自检）", tag: "草案" },
-        { layer: "r", text: "实在不行，才在指南里加一句", tag: "草案" },
-        { layer: "d", text: "每周五周复盘看数字", tag: "草案" }
+      "name": "错误怎么变成改进",
+      "steps": [
+        {
+          "layer": "d",
+          "text": "Tim 纠正产出"
+        },
+        {
+          "layer": "e",
+          "text": "Agent 先改好，再判断算不算纠错"
+        },
+        {
+          "layer": "c",
+          "text": "算就记一条系统改进记录，回复末尾告知「同类第 N 次」"
+        },
+        {
+          "layer": "e",
+          "text": "同类第 2 次：附一条改法"
+        },
+        {
+          "layer": "d",
+          "text": "Tim 同意才改"
+        },
+        {
+          "layer": "k",
+          "text": "先改结构，让错误做不出来；其次加检查；最后才加一句提醒"
+        }
       ]
     },
     {
-      name: "草案怎么变成规则",
-      steps: [
-        { layer: "r", text: "草案页放在知识中心，状态为草案，只当资料" },
-        { layer: "d", text: "Tim 说「按草案试跑」，只限当次" },
-        { layer: "c", text: "每次试跑记一条，连续 3 次无大改才算过" },
-        { layer: "d", text: "Tim 明确说「X 生效」" },
-        { layer: "r", text: "内容拆进总架构或技能，草案改为停用" },
-        { layer: "k", text: "对应技能同步更新" }
+      "name": "做法怎么沉淀",
+      "steps": [
+        {
+          "layer": "e",
+          "text": "收尾时，做法以后还会用到，就问「要不要沉淀」"
+        },
+        {
+          "layer": "d",
+          "text": "Tim 说是"
+        },
+        {
+          "layer": "r",
+          "text": "工作模块清单加一行，没有技能的写模块页"
+        },
+        {
+          "layer": "c",
+          "text": "拿真实工作来用，做法要改就改模块页，在修订记录库记一条"
+        },
+        {
+          "layer": "d",
+          "text": "用顺了，Tim 说「Mxx 写成技能」"
+        },
+        {
+          "layer": "k",
+          "text": "用「创建 Notion 技能」写进技能库"
+        }
       ]
     }
   ],
-
-  // ---------- 按场景 ----------
-  // 正本：工作方法草案附录 A「工作场景做法卡」（v0.9，草案）。scenarios 与附录 A 逐表一致，改流程先改附录 A 再改这里；
-  // skills 的名称、链接、调用方式来自技能库。做法卡最终放在哪见草案第 8 节，搬走后改成从新位置生成。
-  skills: {
-    "起草方案": { url: "https://app.notion.com/84b4d749ebe940ada234417eb5256cee", call: "自动", cmd: "/起草方案", use: "把想法起草成 v0.1 方案，支持整体规划、产品、运营、营销、商业、评审与决策 6 类，写入 KM 或 NT 文档库" },
-    "起草汇报": { url: "https://app.notion.com/317c7394815f8051bf90e7f7c51ff51c", call: "自动", cmd: "/起草汇报", use: "先读上期汇报、会议、项目简报，再起草周报、月报、季报或专项汇报 v0.1" },
-    "推进项目": { url: "https://app.notion.com/9d6f37f700cb4dca867f3144e0370015", call: "自动", cmd: "/推进项目", use: "立项、更新项目简报、记项目决定、列同步清单、结项" },
-    "派发任务卡": { url: "https://app.notion.com/3fcc7394815f813b855ec1c458769a89", call: "仅手动", use: "把要外部成品的任务写成任务卡交给 Grokbot；先判断能不能在对话里直接做" },
-    "商业点子探矿": { url: "https://app.notion.com/cd0260a816584400959e754793c75395", call: "自动", cmd: "@探矿", use: "用 YC 方法挖候选、筛掉伪机会、10 问打分，产出商业方案要点" },
-    "形态分析法 · 创意发散": { url: "https://app.notion.com/fa9f1d8c07724a7d91cf0692d587bf5a", call: "仅手动", cmd: "@形态", use: "用形态矩阵系统发散、组合创意，产出创意卡" },
-    "游戏方案编译器": { url: "https://app.notion.com/df88652d49e14ee4a78ab66e7bf39df3", call: "自动", cmd: "@游戏策划", use: "把游戏想法编译成 Codex 能开工的方案，写入游戏专案库" },
-    "全网需求探测 · 搜索翻译官": { url: "https://app.notion.com/197f8af04e9846edaa4ee213bf5598da", call: "自动", cmd: "@全网探测", use: "把中文调研需求转成 Reddit、X、YouTube 等平台的英文关键词和搜索计划；不抓取、不分析" },
-    "纵横": { url: "https://app.notion.com/ede953cd27324937bf6cab9dad978c6a", call: "仅手动", cmd: "@纵横", use: "拆解职场人际困局，给 2–3 条附话术和风险的策略；不用于业务方案" },
-    "PPT · 大纲格式调整": { url: "https://app.notion.com/31299f7373434fb9876ec691835cddac", call: "自动", use: "把文档转成逐页 PPT 大纲：标题、正文、布局、解说词" },
-    "PPT · 文档生成": { url: "https://app.notion.com/cf36cd02e7e6435e8431153968d252f5", call: "仅手动", use: "把逐页大纲转成交给 Codex 生成 .pptx 的指令" },
-    "规范方案与汇报文档": { url: "https://app.notion.com/bb27d96b82fa4ba18d14146f8726fa8d", call: "自动", use: "整理已有文档的分类、属性、命名，导出 PDF、腾讯文档" },
-    "改进写作": { url: "https://app.notion.com/317c7394815f8123959eea73d1bd1432", call: "自动", use: "润色改写，提升表达、结构和流畅度" },
-    "校对": { url: "https://app.notion.com/317c7394815f81deb91ad5a49dc7eb8c", call: "自动", use: "只改错别字、语法、标点" },
-    "重排格式": { url: "https://app.notion.com/317c7394815f81728d4be4a3c38b9d00", call: "自动", use: "只调标题、列表、分段，不动文字" },
-    "解释": { url: "https://app.notion.com/317c7394815f81b6a73ccac2df70faea", call: "仅手动", use: "在聊天里用大白话解释选中的词或概念" },
-    "创建 Notion 技能": { url: "https://app.notion.com/764274dda42a4630aab16b865ba1f070", call: "自动", cmd: "@建技能", use: "新建技能，或改写、体检现有技能的名称和描述" },
-    "同步技能": { url: "https://app.notion.com/40ec7394815f819486ece610963f061f", call: "仅手动", cmd: "/sync-skills", use: "给 Claude Code、Codex 生成本地技能指针" },
-    "更新系统地图": { url: "https://app.notion.com/410c7394815f81559af6dabee5034225", call: "Agent 专用", use: "从 Notion 回读，更新这张地图" }
+  "skills": {
+    "起草方案": {
+      "url": "https://app.notion.com/84b4d749ebe940ada234417eb5256cee",
+      "call": "自动",
+      "cmd": "/起草方案",
+      "use": "把想法起草成 v0.1 方案，支持整体规划、产品、运营、营销、商业、评审与决策 6 类，写入文档库"
+    },
+    "起草汇报": {
+      "url": "https://app.notion.com/317c7394815f8051bf90e7f7c51ff51c",
+      "call": "自动",
+      "cmd": "/起草汇报",
+      "use": "先读上期汇报、会议、项目简报，再起草周报、月报、季报或专项汇报 v0.1"
+    },
+    "推进项目": {
+      "url": "https://app.notion.com/9d6f37f700cb4dca867f3144e0370015",
+      "call": "自动",
+      "cmd": "/推进项目",
+      "use": "立项、更新项目简报、记项目决定、列同步清单、结项"
+    },
+    "派发任务卡": {
+      "url": "https://app.notion.com/3fcc7394815f813b855ec1c458769a89",
+      "call": "仅手动",
+      "use": "把要外部成品的任务写成任务卡交给 Grokbot；先判断能不能在对话里直接做"
+    },
+    "商业点子探矿": {
+      "url": "https://app.notion.com/cd0260a816584400959e754793c75395",
+      "call": "自动",
+      "cmd": "@探矿",
+      "use": "用 YC 方法挖候选、筛掉伪机会、10 问打分，产出商业方案要点"
+    },
+    "形态分析法 · 创意发散": {
+      "url": "https://app.notion.com/fa9f1d8c07724a7d91cf0692d587bf5a",
+      "call": "仅手动",
+      "cmd": "@形态",
+      "use": "用形态矩阵系统发散、组合创意，产出创意卡"
+    },
+    "游戏方案编译器": {
+      "url": "https://app.notion.com/df88652d49e14ee4a78ab66e7bf39df3",
+      "call": "自动",
+      "cmd": "@游戏策划",
+      "use": "把游戏想法编译成 Codex 能开工的方案，写入游戏专案库"
+    },
+    "全网需求探测 · 搜索翻译官": {
+      "url": "https://app.notion.com/197f8af04e9846edaa4ee213bf5598da",
+      "call": "自动",
+      "cmd": "@全网探测",
+      "use": "把中文调研需求转成 Reddit、X、YouTube 等平台的英文关键词和搜索计划；不抓取、不分析"
+    },
+    "纵横": {
+      "url": "https://app.notion.com/ede953cd27324937bf6cab9dad978c6a",
+      "call": "仅手动",
+      "cmd": "@纵横",
+      "use": "拆解职场人际困局，给 2–3 条附话术和风险的策略；不用于业务方案"
+    },
+    "PPT · 大纲格式调整": {
+      "url": "https://app.notion.com/31299f7373434fb9876ec691835cddac",
+      "call": "自动",
+      "use": "把文档转成逐页 PPT 大纲：标题、正文、布局、解说词"
+    },
+    "PPT · 文档生成": {
+      "url": "https://app.notion.com/cf36cd02e7e6435e8431153968d252f5",
+      "call": "仅手动",
+      "use": "把逐页大纲转成交给 Codex 生成 .pptx 的指令"
+    },
+    "规范方案与汇报文档": {
+      "url": "https://app.notion.com/bb27d96b82fa4ba18d14146f8726fa8d",
+      "call": "自动",
+      "use": "整理已有文档的分类、属性、命名，导出 PDF、腾讯文档"
+    },
+    "改进写作": {
+      "url": "https://app.notion.com/317c7394815f8123959eea73d1bd1432",
+      "call": "自动",
+      "use": "润色改写，提升表达、结构和流畅度"
+    },
+    "校对": {
+      "url": "https://app.notion.com/317c7394815f81deb91ad5a49dc7eb8c",
+      "call": "自动",
+      "use": "只改错别字、语法、标点"
+    },
+    "重排格式": {
+      "url": "https://app.notion.com/317c7394815f81728d4be4a3c38b9d00",
+      "call": "自动",
+      "use": "只调标题、列表、分段，不动文字"
+    },
+    "解释": {
+      "url": "https://app.notion.com/317c7394815f81b6a73ccac2df70faea",
+      "call": "仅手动",
+      "use": "在聊天里用大白话解释选中的词或概念"
+    },
+    "创建 Notion 技能": {
+      "url": "https://app.notion.com/764274dda42a4630aab16b865ba1f070",
+      "call": "自动",
+      "cmd": "@建技能",
+      "use": "新建技能，或改写、体检现有技能的名称和描述"
+    },
+    "同步技能": {
+      "url": "https://app.notion.com/40ec7394815f819486ece610963f061f",
+      "call": "仅手动",
+      "cmd": "/sync-skills",
+      "use": "给 Claude Code、Codex 生成本地技能指针"
+    },
+    "更新系统地图": {
+      "url": "https://app.notion.com/410c7394815f81559af6dabee5034225",
+      "call": "Agent 专用",
+      "use": "从 Notion 回读，更新这张地图"
+    }
   },
-
-  scenarios: [
+  "modules": [
     {
-      id: "all",
-      name: "通用：一次任务怎么走",
-      sub: "任何场景都按这 8 步；修改工具随时可用",
-      when: "你不用记技能名：用大白话说要做什么，Agent 选技能并在第一行告诉你；选错了当场说。",
-      skills: ["改进写作", "校对", "重排格式", "解释"],
-      steps: [
-        { stage: "开口", you: "用大白话说要做什么", agent: "第一行说明这次用哪个技能、之后可能接哪个", tag: "草案" },
-        { stage: "想清楚", you: "想法还模糊时才需要", agent: "先发散或评估，再进入起草", skills: ["商业点子探矿", "形态分析法 · 创意发散", "游戏方案编译器"] },
-        { stage: "先查后问", you: "只回答要你拍板的题", agent: "先读项目简报、会议、上期文档，每个问题附推荐答案", tag: "草案" },
-        { stage: "起草", you: "等 v0.1", agent: "按格式库起草，末尾附证据卡", skills: ["起草方案", "起草汇报"], tag: "草案" },
-        { stage: "修改", you: "直接说改什么", agent: "判断修改种类再处理（见下方「中途要改」）", skills: ["改进写作", "校对", "重排格式"] },
-        { stage: "验收", you: "看证据卡判断，不必读全文", agent: "外发、删除、对外承诺停下来等你按" },
-        { stage: "落地", you: "决定下一步", agent: "立项、导出、做 PPT 或外派", skills: ["推进项目", "规范方案与汇报文档", "PPT · 大纲格式调整", "派发任务卡"] },
-        { stage: "每周收尾", you: "周五说「周复盘」", agent: "列纠错和升级建议，最后更新系统地图", skills: ["起草汇报", "更新系统地图"], tag: "草案" }
-      ],
-      edits: [
-        { k: "只改这一份", e: "「这段换个说法」「A 挪到前面」", d: "直接改，版本 +0.1；不记" },
-        { k: "改主意、补信息", e: "「这个项目不做了」「数字改成 32」", d: "改稿；项目决定用「推进项目」记进简报；不算纠错" },
-        { k: "违反规则", e: "「又没标来源」「以后都这样」", d: "先改好，记一条纠错；同类第 2 次附升级建议" },
-        { k: "方向大变", e: "「目标用户换了」", d: "不打补丁，重新起草出新版本，旧版保留" }
-      ],
-      gaps: [
-        { t: "「开口说明用哪个技能」还没试跑", tag: "草案" },
-        { t: "证据卡末尾加「下一步可选」，让 Agent 主动报下一个技能", tag: "草案" },
-        { t: "周复盘还不是技能，只是草案里的流程", tag: "草案" }
+      "id": "M01",
+      "name": "创意发散",
+      "group": "提案",
+      "status": "技能版",
+      "io": "模糊想法 → 候选方向和初筛",
+      "skills": [
+        "商业点子探矿",
+        "形态分析法 · 创意发散",
+        "游戏方案编译器"
       ]
     },
     {
-      id: "p",
-      name: "提案",
-      sub: "从无到有写初版方案",
-      when: "要从一个想法写出第一版方案时。想法已经拍板、只差做成品，属于「成品制作」。",
-      skills: ["起草方案", "商业点子探矿", "形态分析法 · 创意发散", "游戏方案编译器"],
-      steps: [
-        { stage: "发散", you: "想法模糊时说「帮我找点子」或「发散一下」", agent: "找商业机会用探矿，系统组合创意用形态分析，游戏用编译器", skills: ["商业点子探矿", "形态分析法 · 创意发散", "游戏方案编译器"] },
-        { stage: "先查后问", you: "回答决策题", agent: "读相关项目、会议和旧方案，只问要拍板的事", tag: "草案" },
-        { stage: "起草", you: "说「写成方案」", agent: "按 6 类方案格式起草 v0.1，写进文档库，附证据卡", skills: ["起草方案"] },
-        { stage: "修改", you: "直接说改什么", agent: "按修改种类处理", skills: ["改进写作"] },
-        { stage: "落地", you: "要立项还是做成品", agent: "立项转「推进项目」；做 PPT 转「成品制作」", skills: ["推进项目"] }
-      ],
-      deliver: "方案稿：目标、路径、取舍、风险齐全，至少 2 个备选。",
-      gaps: [
-        { t: "对外方案「换人审」（另开会话或换模型）属第二期", tag: "草案" },
-        { t: "「起草方案」的先查后问、证据卡改造在 C 线，进度待确认", tag: "待核实" }
+      "id": "M02",
+      "name": "起草方案",
+      "group": "提案",
+      "status": "技能版",
+      "io": "想法和资料 → v0.1 方案，附证据卡",
+      "skills": [
+        "起草方案"
       ]
     },
     {
-      id: "i",
-      name: "信息收集",
-      sub: "为判断补事实，不给建议",
-      when: "要查清事实、做对比、补数据时。要给建议，属于「决策辅助」。",
-      skills: ["全网需求探测 · 搜索翻译官"],
-      steps: [
-        { stage: "定问题", you: "说清要回答什么问题、给谁用", agent: "复述问题和范围，确认查到什么程度算够" },
-        { stage: "定渠道", you: "海外用户调研时说「全网探测」", agent: "出平台、关键词和搜索计划", skills: ["全网需求探测 · 搜索翻译官"] },
-        { stage: "收集", you: "等结果", agent: "查公开网页和工作区文档；要登录的平台外派" },
-        { stage: "整理", you: "看摘要", agent: "每条有出处；事实、推测、未知分开，查不到写「未知」" },
-        { stage: "交接", you: "决定用在哪", agent: "交给提案或决策辅助" }
+      "id": "M03",
+      "name": "调研收集",
+      "group": "信息收集",
+      "status": "技能版",
+      "io": "问题和信息来源 → 有出处的摘要或对比表，事实、推测、未知分开",
+      "skills": [
+        "全网需求探测 · 搜索翻译官"
       ],
-      deliver: "研究摘要、对比表或数据表：每条有出处，事实、推测、未知分开。",
-      gaps: [
-        { t: "只有 1 个技能，而且只管「规划搜索」；抓取、整理、出摘要都没有技能", tag: "待建" },
-        { t: "研究摘要没有固定格式", tag: "待核实" }
+      "note": "技能只管规划搜索"
+    },
+    {
+      "id": "M04",
+      "name": "材料吸收",
+      "group": "信息收集",
+      "status": "技能版",
+      "io": "会议、邮件、截图、口述 → 改动清单，确认后写进项目简报",
+      "skills": [
+        "推进项目"
       ]
     },
     {
-      id: "j",
-      name: "决策辅助",
-      sub: "从不同视角给判断和建议",
-      when: "要在几个选项里做取舍、给某个想法挑毛病，或者处理一个职场困局时。",
-      skills: ["纵横", "起草方案"],
-      steps: [
-        { stage: "先查后问", you: "说清要决定什么、有哪些选项", agent: "读背景，只问缺的关键信息", tag: "草案" },
-        { stage: "单视角", you: "说「挑挑毛病」「压力测试一下」", agent: "列风险、反例、最坏情况；目前没有专门技能" },
-        { stage: "多视角", you: "重要决策时要求", agent: "按不同角色各给结论，列分歧", tag: "待建" },
-        { stage: "职场困局", you: "说「纵横」或描述人际难题", agent: "给 2–3 条策略，附话术和风险", skills: ["纵横"] },
-        { stage: "成文", you: "需要留档时", agent: "写成「评审与决策」类方案", skills: ["起草方案"] },
-        { stage: "拍板", you: "最多回答 3 个待拍板项", agent: "决定写回所属的项目简报或正式文档", skills: ["推进项目"] }
-      ],
-      deliver: "各视角的结论和理由、分歧清单、建议；待拍板最多 3 项。",
-      gaps: [
-        { t: "业务决策没有专门技能，「纵横」只管职场人际", tag: "待建" },
-        { t: "多视角对撞原本外派给 Grokbot，任务卡机制已降为可选", tag: "待核实" },
-        { t: "多模型比稿只在少数关键决策用，属第二期", tag: "草案" }
+      "id": "M05",
+      "name": "业务评审",
+      "group": "决策辅助",
+      "status": "待建",
+      "io": "方案或选项 → 风险、反例、多视角分歧、建议，待拍板最多 3 项",
+      "skills": []
+    },
+    {
+      "id": "M06",
+      "name": "职场策略",
+      "group": "决策辅助",
+      "status": "技能版",
+      "io": "人际难题 → 2–3 条策略，附话术和风险",
+      "skills": [
+        "纵横"
       ]
     },
     {
-      id: "m",
-      name: "成品制作",
-      sub: "照已拍板的方案做成品",
-      when: "方案已经定稿，要做成 PPT、PDF、H5、原型等可以拿出去的东西时。",
-      skills: ["PPT · 大纲格式调整", "PPT · 文档生成", "规范方案与汇报文档"],
-      steps: [
-        { stage: "确认定稿", you: "指明用哪一版", agent: "核对是不是已拍板的版本" },
-        { stage: "定呈现", you: "确认形式和页数", agent: "先给呈现方案，不直接开做" },
-        { stage: "PPT", you: "说「做成 PPT」", agent: "先出逐页大纲，你确认后转成给 Codex 的生成指令", skills: ["PPT · 大纲格式调整", "PPT · 文档生成"] },
-        { stage: "文档导出", you: "说「导出 PDF / 腾讯文档」", agent: "整理属性和正文后导出", skills: ["规范方案与汇报文档"] },
-        { stage: "H5、原型", you: "说要什么", agent: "交 Codex 或外派 Grokbot", skills: ["派发任务卡"] },
-        { stage: "验收", you: "打开链接检查", agent: "对照定稿逐项自检" }
-      ],
-      deliver: "成品链接：与定稿一致，先确认呈现方案再制作，链接能打开。",
-      gaps: [
-        { t: "PPT 两步之间要手动接：「PPT · 文档生成」是仅手动", tag: "仅手动" },
-        { t: "H5、原型没有专门技能", tag: "待建" },
-        { t: "没有视频制作能力，目前只到脚本", tag: "待建" }
+      "id": "M07",
+      "name": "立项与结项",
+      "group": "项目管理",
+      "status": "技能版",
+      "io": "定稿方案 → 项目简报；结项补结果",
+      "skills": [
+        "推进项目"
       ]
     },
     {
-      id: "s",
-      name: "信息同步",
-      sub: "让相关的人知道",
-      when: "要写周报、月报、专项汇报，或者把项目进展同步给同事时。",
-      skills: ["起草汇报", "推进项目", "派发任务卡"],
-      steps: [
-        { stage: "汇报", you: "说「写周报」「写月报」", agent: "先读上期汇报、会议、项目简报，再请你补充", skills: ["起草汇报"] },
-        { stage: "项目同步", you: "说「把这个同步给 XX」", agent: "列同步清单", skills: ["推进项目"] },
-        { stage: "成品", you: "要邮件、群消息等成品时", agent: "经任务卡交 Grokbot 生成，只生成不发送", skills: ["派发任务卡"] },
-        { stage: "确认", you: "看草稿", agent: "数据逐条核对" },
-        { stage: "发送", you: "对外的由你来按", agent: "不替你发送" }
-      ],
-      deliver: "周报、邮件、纪要、发布包：数据准确，草稿先给你确认，对外的要你当次同意。",
-      gaps: [
-        { t: "邮件由谁写还没定", tag: "待核实" },
-        { t: "方案回填（自定义 Agent）待配置", tag: "待配置" },
-        { t: "「起草汇报」的证据卡改造在 C 线，进度待确认", tag: "待核实" }
+      "id": "M08",
+      "name": "规划拆解",
+      "group": "项目管理",
+      "status": "手工版",
+      "io": "目标、资源、截止日 → 里程碑、排期、负责人、依赖，写进项目简报",
+      "skills": [],
+      "url": "https://app.notion.com/414c7394815f8192a727e88672cf329a"
+    },
+    {
+      "id": "M09",
+      "name": "项目周检",
+      "group": "项目管理",
+      "status": "待建",
+      "io": "全部进行中项目 → 过期待决、临近里程碑、健康度建议，待拍板最多 3 项",
+      "skills": []
+    },
+    {
+      "id": "M10",
+      "name": "PPT 制作",
+      "group": "成品制作",
+      "status": "技能版",
+      "io": "定稿 → 逐页大纲 → .pptx",
+      "skills": [
+        "PPT · 大纲格式调整",
+        "PPT · 文档生成"
       ]
     },
     {
-      id: "x",
-      name: "系统维护",
-      sub: "不属于五类：维护这套系统本身",
-      when: "要新建或修改技能、处理纠错、做周复盘、更新系统地图时。",
-      skills: ["创建 Notion 技能", "同步技能", "更新系统地图"],
-      steps: [
-        { stage: "新技能", you: "说「把这个沉淀成技能」", agent: "分幕起草，写进技能库", skills: ["创建 Notion 技能"] },
-        { stage: "同步", you: "说「同步技能」", agent: "给 Claude Code、Codex 生成本地指针", skills: ["同步技能"] },
-        { stage: "纠错", you: "纠正时照常说", agent: "记系统改进记录；同类第 2 次附升级建议", tag: "草案" },
-        { stage: "周复盘", you: "周五说「周复盘」", agent: "列数字、待升级清单、试跑进度", tag: "草案" },
-        { stage: "更新地图", you: "同意推送", agent: "回读 Notion，更新系统地图", skills: ["更新系统地图"] }
-      ],
-      deliver: "改动都写回 Notion 正本，地图只是视图。",
-      gaps: [
-        { t: "技能库还没有「工作类型」属性，场景归类是手工整理", tag: "草案" },
-        { t: "五类工作的「做法卡」放在哪还没定", tag: "草案" }
+      "id": "M11",
+      "name": "文档规范与导出",
+      "group": "成品制作",
+      "status": "技能版",
+      "io": "已有文档 → 补属性、清格式、导出 PDF 或腾讯文档",
+      "skills": [
+        "规范方案与汇报文档"
+      ]
+    },
+    {
+      "id": "M12",
+      "name": "H5 与原型",
+      "group": "成品制作",
+      "status": "待建",
+      "io": "定稿 → 能打开的 H5、落地页或原型",
+      "skills": []
+    },
+    {
+      "id": "M13",
+      "name": "文字修改",
+      "group": "成品制作",
+      "status": "技能版",
+      "io": "选中文字 → 润色、校对、重排、解释",
+      "skills": [
+        "改进写作",
+        "校对",
+        "重排格式",
+        "解释"
+      ]
+    },
+    {
+      "id": "M14",
+      "name": "起草汇报",
+      "group": "信息同步",
+      "status": "技能版",
+      "io": "周期和项目 → 周报、月报、季报，附证据卡",
+      "skills": [
+        "起草汇报"
+      ]
+    },
+    {
+      "id": "M15",
+      "name": "沟通草稿",
+      "group": "信息同步",
+      "status": "技能版",
+      "io": "结论和收件人 → 邮件、群消息、在线文档（只生成不发送）",
+      "skills": [
+        "推进项目",
+        "派发任务卡"
+      ]
+    },
+    {
+      "id": "M16",
+      "name": "复盘",
+      "group": "系统维护",
+      "status": "技能版",
+      "io": "一段时间的记录 → 结论和改进项",
+      "skills": [
+        "起草汇报"
+      ]
+    },
+    {
+      "id": "M17",
+      "name": "技能管理",
+      "group": "系统维护",
+      "status": "技能版",
+      "io": "反复用的做法 → 技能库条目和本地指针",
+      "skills": [
+        "创建 Notion 技能",
+        "同步技能"
+      ]
+    },
+    {
+      "id": "M18",
+      "name": "系统地图",
+      "group": "系统维护",
+      "status": "技能版",
+      "io": "Notion 正本 → 系统地图",
+      "skills": [
+        "更新系统地图"
       ]
     }
   ],
-
-  // 模块与工作流全貌（草案，2026-11-09）。正本是「工作场景做法卡｜草案」v0.2 第 0 节。
-  // status 只用：已有、部分、缺失。pri 只用：P0、P1、P2。vtype 是验证类型，对应 rollout.tiers 的 id。
-  // 整体原则：工作流按工作类型分，不按业务或项目分。注意本页公开，不写个人的业务划分。
-  principle: "工作流按工作类型分，不按业务或项目分。同一条工作流可以用在任何业务上，不同的只是输入的信息。",
-  modules: [
-    { id: "M01", name: "创意发散", group: "提案", status: "已有", io: "模糊想法 → 候选方向和初筛", skills: ["商业点子探矿", "形态分析法 · 创意发散", "游戏方案编译器"], vtype: "A" },
-    { id: "M02", name: "起草方案", group: "提案", status: "已有", io: "想法和资料 → v0.1 方案，附证据卡", skills: ["起草方案"], note: "先查后问、证据卡试行中", vtype: "A" },
-    { id: "M03", name: "调研收集", group: "信息收集", status: "部分", io: "问题和信息来源 → 有出处的摘要或对比表，事实、推测、未知分开（不同业务只是信息来源不同）", skills: ["全网需求探测 · 搜索翻译官"], gap: "只管规划搜索；抓取、整理、出摘要没有技能，研究摘要也没有固定格式", pri: "P1", vtype: "A" },
-    { id: "M04", name: "材料吸收", group: "信息收集", status: "已有", io: "会议、邮件、截图、口述 → 改动清单（决定、待办、风险），确认后写进项目简报", skills: ["推进项目"], note: "用「推进项目」的更新模式；会议库写入方待核实", vtype: "A" },
-    { id: "M05", name: "业务评审", group: "决策辅助", status: "缺失", io: "方案或几个选项 → 风险、反例、多视角分歧、建议，待拍板最多 3 项", skills: [], gap: "「纵横」只管职场人际，业务方案没人专门挑毛病", pri: "P0", vtype: "A" },
-    { id: "M06", name: "职场策略", group: "决策辅助", status: "已有", io: "人际难题 → 2–3 条策略，附话术和风险", skills: ["纵横"], vtype: "A" },
-    { id: "M07", name: "立项与结项", group: "项目管理", status: "已有", io: "定稿方案 → 项目简报（目标、完成标准、阶段、现行决定）；结项补结果", skills: ["推进项目"], vtype: "A" },
-    { id: "M08", name: "规划拆解", group: "项目管理", status: "缺失", io: "目标、资源、截止日 → 里程碑、排期、负责人、依赖和关键路径，写进项目简报", skills: [], gap: "「推进项目」立项只写阶段，没有排期、负责人和依赖", pri: "P0", vtype: "A" },
-    { id: "M09", name: "项目周检", group: "项目管理", status: "缺失", io: "全部进行中项目 → 过期待决、临近里程碑、健康度建议，待拍板最多 3 项", skills: [], gap: "没有技能，卡点靠 Tim 自己发现", pri: "P0", vtype: "B" },
-    { id: "M10", name: "PPT 制作", group: "成品制作", status: "已有", io: "定稿 → 逐页大纲 → .pptx", skills: ["PPT · 大纲格式调整", "PPT · 文档生成"], gap: "两步之间要手动接（「PPT · 文档生成」是仅手动）", pri: "P2", vtype: "A" },
-    { id: "M11", name: "文档规范与导出", group: "成品制作", status: "已有", io: "已有文档 → 补属性、清格式、导出 PDF 或腾讯文档", skills: ["规范方案与汇报文档"], vtype: "A" },
-    { id: "M12", name: "H5 与原型", group: "成品制作", status: "缺失", io: "定稿 → 能打开的 H5、落地页或原型", skills: [], gap: "没有技能，每次临时给 Codex 写指令", pri: "P1", vtype: "A" },
-    { id: "M13", name: "文字修改", group: "成品制作", status: "已有", io: "选中文字 → 润色、校对、重排、解释", skills: ["改进写作", "校对", "重排格式", "解释"], vtype: "A" },
-    { id: "M14", name: "起草汇报", group: "信息同步", status: "已有", io: "周期和项目 → 周报、月报、季报，附证据卡", skills: ["起草汇报"], note: "先查后问、证据卡试行中", vtype: "B" },
-    { id: "M15", name: "沟通草稿", group: "信息同步", status: "部分", io: "结论和收件人 → 邮件、群消息、在线文档（只生成不发送）", skills: ["推进项目", "派发任务卡"], gap: "外部成品靠路由层，11-22 在 Grokbot 和 Hermes 里二选一；邮件由谁写未定", pri: "P1", vtype: "C" },
-    { id: "M16", name: "复盘", group: "系统维护", status: "部分", io: "一段时间的记录 → 结论和改进项", skills: ["起草汇报"], gap: "周复盘只是草案里的流程；项目复盘没有固定做法", pri: "P2", vtype: "B" },
-    { id: "M17", name: "技能管理", group: "系统维护", status: "已有", io: "反复用的做法 → 技能库条目和本地指针", skills: ["创建 Notion 技能", "同步技能"], vtype: "A" },
-    { id: "M18", name: "系统地图", group: "系统维护", status: "已有", io: "Notion 正本 → 本页面", skills: ["更新系统地图"], vtype: "A" }
+  "workflows": [
+    {
+      "id": "W1",
+      "name": "项目周循环",
+      "goal": "进行中的项目每周至少更新一次，决定和待办不丢，卡点一周内被发现",
+      "cmd": "随时「记进 X 项目」；每周「项目周检」",
+      "chain": [
+        {
+          "m": "M04"
+        },
+        {
+          "m": "M09"
+        },
+        {
+          "m": "M15"
+        }
+      ]
+    },
+    {
+      "id": "W2",
+      "name": "周期汇报",
+      "goal": "每周五前交出数据有出处的周报；月报、季报汇总下级汇报",
+      "cmd": "「写周报」「写月报」",
+      "chain": [
+        {
+          "m": "M04"
+        },
+        {
+          "m": "M14"
+        },
+        {
+          "m": "M11",
+          "opt": true
+        },
+        {
+          "m": "M15",
+          "opt": true
+        }
+      ]
+    },
+    {
+      "id": "W3",
+      "name": "新项目落地",
+      "goal": "从一个想法到有排期、有负责人、团队知道的项目",
+      "cmd": "「我想做 X」",
+      "chain": [
+        {
+          "m": "M01",
+          "opt": true
+        },
+        {
+          "m": "M02"
+        },
+        {
+          "m": "M05"
+        },
+        {
+          "m": "M07"
+        },
+        {
+          "m": "M08"
+        },
+        {
+          "m": "M15"
+        }
+      ]
+    },
+    {
+      "id": "W4",
+      "name": "方案到交付",
+      "goal": "把定稿方案做成能拿出去的成品",
+      "cmd": "「把 X 做成 PPT / H5 / PDF」",
+      "chain": [
+        {
+          "m": "M02"
+        },
+        {
+          "m": "M05",
+          "opt": true
+        },
+        {
+          "m": "M10",
+          "alt": true
+        },
+        {
+          "m": "M11",
+          "alt": true
+        },
+        {
+          "m": "M12",
+          "alt": true
+        },
+        {
+          "m": "M15",
+          "opt": true
+        }
+      ]
+    }
   ],
-
-  workflows: [
-    { id: "W1", name: "项目周循环", goal: "进行中的项目每周至少更新一次，决定和待办不丢，卡点一周内被发现", freq: "每周多次", imp: "高", cmd: "随时说「记进 X 项目」；每周说「项目周检」",
-      chain: [{ m: "M04", you: "把会议、邮件、截图丢过来" }, { m: "M09", you: "每周拍板最多 3 件事" }, { m: "M15", you: "确认同步清单，自己发送" }], vtype: "C" },
-    { id: "W2", name: "周期汇报", goal: "每周五前交出数据有出处的周报；月报、季报汇总下级汇报", freq: "每周", imp: "高", cmd: "「写周报」「写月报」",
-      chain: [{ m: "M04", you: "补本周材料" }, { m: "M14", you: "回答补充问题，看证据卡" }, { m: "M11", you: "要导出时说一声", opt: true }, { m: "M15", you: "自己发送", opt: true }], vtype: "B" },
-    { id: "W3", name: "新项目落地", goal: "从一个想法到有排期、有负责人、团队知道的项目", freq: "每月", imp: "高", cmd: "「我想做 X」",
-      chain: [{ m: "M01", you: "想法还模糊时才需要", opt: true }, { m: "M02", you: "拍板方案里的决策题" }, { m: "M05", you: "看风险和分歧，拍板最多 3 项" }, { m: "M07", you: "确认立项" }, { m: "M08", you: "确认排期和负责人" }, { m: "M15", you: "自己发送" }], vtype: "C" },
-    { id: "W4", name: "方案到交付", goal: "把定稿方案做成能拿出去的成品", freq: "每月几次", imp: "高", cmd: "「把 X 做成 PPT / H5 / PDF」",
-      chain: [{ m: "M02", you: "指明用哪一版定稿" }, { m: "M05", you: "对外方案先评审", opt: true }, { m: "M10", you: "确认大纲", alt: true }, { m: "M11", you: "确认导出形式", alt: true }, { m: "M12", you: "确认呈现方案", alt: true }, { m: "M15", you: "自己发送", opt: true }], vtype: "A" },
-    { id: "W5", name: "研判与决策", goal: "针对一个问题或机会，查清事实、评估取舍，产出可拍板的结论或方案", freq: "每周", imp: "高", cmd: "「帮我研判一下 X」「验证一下 X」",
-      chain: [{ m: "M01", you: "还没有候选方向时才需要", opt: true }, { m: "M03", you: "确认要回答的问题和信息来源" }, { m: "M05", you: "拍板最多 3 项；有立项标准的按标准过筛" }, { m: "M02", you: "值得做就写成方案，再走「新项目落地」" }], vtype: "A",
-      note: "信息来源按问题换：海外用户和市场需求可用「搜索翻译官」规划搜索，也可以是门店、用户或商家调研。要等市场或用户回应的验证（访谈、上线测试）按外部交互型验证。" },
-    { id: "W6", name: "产品原型迭代", goal: "把一个想法做成可试用的产品或原型，按反馈一版版改", freq: "低→中", imp: "高", cmd: "「把 X 做成产品原型」",
-      chain: [{ m: "M08", you: "确认版本节奏" }, { m: "M12", you: "试用并给反馈" }, { m: "M16", you: "看复盘，决定下一版" }], vtype: "C",
-      note: "新产品从零做原型、已有产品加新功能，都走这条。" },
-    { id: "W7", name: "系统维护周循环", goal: "同一种错不犯第二次，技能和地图跟得上", freq: "每周", imp: "中", cmd: "周五说「周复盘」",
-      chain: [{ m: "M16", you: "逐条批准或驳回升级建议" }, { m: "M17", you: "同意改哪个技能" }, { m: "M18", you: "同意推送" }], vtype: "B" }
-  ],
-
-  solo: { name: "单独调用", sub: "不串成工作流，随用随叫", mods: ["M06", "M13", "M01"], note: "职场难题叫「纵横」；改文字直接说改什么；游戏想法叫「游戏方案编译器」。" },
-
-  rollout: {
-    order: [
-      { m: "M08", why: "「新项目落地」「产品原型迭代」都要用；Tim 点名的例子；手上进行中的项目正缺排期和负责人，马上能试" },
-      { m: "M09", why: "补上它，最高频的「项目周循环」就闭环了；工作量小，主要是读项目库列清单" },
-      { m: "M05", why: "被 3 条工作流用到，最多；对外方案的质量靠它" },
-      { m: "M03", why: "「研判与决策」的核心；先定研究摘要格式" },
-      { m: "M15", why: "等 11-22 路由层定了再做，免得做两遍" },
-      { m: "M12", why: "要做产品原型时再做；在那之前临时用 Codex" },
-      { m: "M16", why: "周复盘先按草案手动跑，攒够几次再定型" },
-      { m: "M10", why: "已经能用，只是两步之间要手动接，属于优化" }
+  "solo": {
+    "name": "单独调用",
+    "sub": "不串进工作流，随用随叫",
+    "mods": [
+      "M06",
+      "M13"
     ],
-    tiers: [
-      { id: "A", name: "产出型", what: "一次出一份东西：方案、排期、评审、成品", how: "用真实任务做 3 次，连续 3 次无大改就转正", period: "约 1–2 周", look: "只看证据卡能不能判断；Tim 改了多少" },
-      { id: "B", name: "周期型", what: "按周或按月重复：周检、周报、周复盘", how: "连续跑 3 个周期，无大改就转正", period: "约 3–4 周", look: "准时；有没有漏项；Tim 介入几次" },
-      { id: "C", name: "外部交互型", what: "要等同事、客户或市场回应：沟通、项目推进、需要市场回应的验证", how: "走完一个完整业务回合（一个里程碑）", period: "约 4–8 周", look: "结果指标：卡点多久被发现、对方有没有照做、拿到几条有效反馈" }
+    "note": "单独调用、不串进工作流：M06 职场策略、M13 文字修改。其他工作流见「以后再说」。"
+  },
+  "rollout": {
+    "name": "第一批打磨",
+    "sub": "一次打磨一个，先手工跑",
+    "order": [
+      {
+        "m": "M08"
+      },
+      {
+        "m": "M09"
+      },
+      {
+        "m": "M05"
+      }
     ],
-    rules: [
-      "先模块，后工作流：模块单独验证通过，再把整条工作流完整走一次",
-      "每个模块开工前写一张试跑卡：属于哪一型、试几次或几个周期、看哪几个指标；大改的定义沿用草案第 7 节",
-      "每次试跑记一条「系统改进记录」（类型＝试跑）",
-      "工作流转正：所含模块都已转正，再完整走通 1 次、无大改",
-      "到期凑不够次数：在周复盘决定延期还是缩小范围"
+    "steps": [
+      "Tim 说「新增工作模块 X」，或者「这次按 Mxx 做」",
+      "Agent 在清单加一行（含工作类型）；没有现成技能的，建模块页，写定义和 3–6 步做法",
+      "拿一件真实的工作来用，交付时附证据卡",
+      "收尾时问「这次做法要改吗？」，Tim 说改就改模块页，在修订记录库记一条",
+      "Tim 觉得用顺了，就说「Mxx 写成技能」，交给「创建 Notion 技能」；形态改为技能版"
     ]
   },
-
-  // 「开始使用」视图：概要。正本是「工作方法｜第一期运行规则」第 0 节，详细说明只写在那里。
-  start: {
-    source: { name: "工作方法｜第一期运行规则 · 第 0 节", url: "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965" },
-    intro: "接入新 Agent 时只做一次设置；之后 Agent 每次开场自己去 Notion 读，你不用手动贴资料。",
-    cards: [
+  "start": {
+    "source": {
+      "name": "给 Tim：操作说明",
+      "url": "https://app.notion.com/414c7394815f81ca8ed7da189e01118b"
+    },
+    "intro": "接入新 Agent 时只做一次设置；之后 Agent 每次开场自己去 Notion 读，你不用手动贴资料。",
+    "cards": [
       {
-        id: "setup", name: "接入新 Agent", sub: "一次性：把三行指令放进平台",
-        role: "新平台第一次用时做一次。把下面三行放进它的平台指令，之后它每次开场都会自己读 Notion。",
-        rows: [
-          { k: "Claude Code", v: "~/.claude/AGENTS.md", tag: "已加" },
-          { k: "Codex", v: "~/.codex/AGENTS.md", tag: "已加" },
-          { k: "Claude 聊天", v: "账户 → Claude 指令", tag: "已加" },
-          { k: "Notion AI", v: "Notion 里的开场页", tag: "已加" },
-          { k: "Grokbot", v: "平台配置，第二期接入", tag: "待配置" }
+        "id": "setup",
+        "name": "接入新 Agent",
+        "sub": "一次性：把三行放进平台指令",
+        "role": "新平台第一次用时做一次。放好后开一个新会话说「验证接入」，它应该列出开场读过的工作守则、Tim 偏好和版本。",
+        "rows": [
+          {
+            "k": "Claude Code",
+            "v": "~/.claude/AGENTS.md",
+            "tag": "已加"
+          },
+          {
+            "k": "Codex",
+            "v": "~/.codex/AGENTS.md",
+            "tag": "已加"
+          },
+          {
+            "k": "Notion AI",
+            "v": "Notion 里的开场页",
+            "tag": "已加"
+          },
+          {
+            "k": "Claude 聊天",
+            "v": "账户 → Claude 指令",
+            "tag": "待配置"
+          },
+          {
+            "k": "Grokbot",
+            "v": "平台配置",
+            "tag": "待配置"
+          }
         ],
-        code: "1. 读写 Notion 前，先读「Agent 操作指南」：https://app.notion.com/p/40fc7394815f816f9b28de00176a3b0a\n2. 和 Tim 协作的方法（先查后问、证据卡、纠错、周复盘）以「工作方法｜第一期运行规则」为准：https://app.notion.com/p/413c7394815f8186a445d9ba7d5a7965\n3. 可复用或多步的工作，先查 Notion 技能库有没有对应技能，用之前读它的正文。",
-        codeTitle: "每个平台都放这三行"
+        "codeTitle": "每个平台都放这三行",
+        "code": "开场先读 Notion「知识中心」：https://app.notion.com/p/400c7394815f81d181eef3c3c4764461 ，按页首「给 Agent」部分执行。\n连不上 Notion 时告诉 Tim，不凭记忆或本地文件执行。\n外发、删除、对外承诺由 Tim 来按。"
       },
       {
-        id: "open", name: "每次开场", sub: "Agent 自己读，你不用贴", ordered: true,
-        role: "Agent 按这个顺序自己读。读不到 Notion 时会告诉你，不凭记忆或本地文件执行。",
-        rows: [
-          { k: "操作指南", v: "Agent 操作指南：怎么读写 Notion", url: "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a" },
-          { k: "运行规则", v: "工作方法｜第一期运行规则：怎么和你协作", url: "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965" },
-          { k: "About Tim", v: "About Tim，并按主题搜记忆" },
-          { k: "技能正文", v: "要用的技能正文" },
-          { k: "项目简报", v: "涉及某个项目时，读它的项目简报" }
+        "id": "open",
+        "name": "每次开场",
+        "sub": "Agent 自己读，你不用贴",
+        "ordered": true,
+        "role": "开场只读两页，其余用到时再读。读不到 Notion 时会告诉你，不凭记忆或本地文件执行。",
+        "rows": [
+          {
+            "k": "工作守则",
+            "v": "系统架构，怎么和你协作",
+            "url": "https://app.notion.com/413c7394815f8186a445d9ba7d5a7965"
+          },
+          {
+            "k": "Tim 偏好",
+            "v": "做事方式",
+            "url": "https://app.notion.com/ddf815cb4af545ee8cd3d56105b54a09"
+          },
+          {
+            "k": "写 Notion 前",
+            "v": "Agent 操作指南",
+            "url": "https://app.notion.com/40fc7394815f816f9b28de00176a3b0a"
+          },
+          {
+            "k": "涉及项目时",
+            "v": "它的项目简报"
+          },
+          {
+            "k": "用技能时",
+            "v": "技能正文"
+          }
         ]
       },
       {
-        id: "daily", name: "日常使用", sub: "在哪做、怎么叫技能",
-        role: "用大白话说要做什么，Agent 选技能，并在回复第一行说明用的是哪个。",
-        rows: [
-          { k: "写方案、汇报、管项目", v: "Claude Code，固定在一个文件夹里开会话" },
-          { k: "页面里改一段、校对", v: "Notion AI，就地改；多轮问答的工作还是去 Claude Code" },
-          { k: "代码、原型、数据", v: "Claude Code 或 Codex" },
-          { k: "外部账号、后台运行", v: "Grokbot，经「派发任务卡」，只生成不发送" },
-          { k: "调用技能", v: "直接说要做什么；Claude Code 里也能输入英文标识，如 /draft-proposal" },
-          { k: "改技能", v: "只改 Notion 技能库的正文，立即生效；新建或改名后跑「同步技能」" }
+        "id": "daily",
+        "name": "每天怎么用",
+        "sub": "在哪做、怎么验收",
+        "role": "直接说要做什么，Agent 在第一行说明用哪个技能；不用记技能名。",
+        "rows": [
+          {
+            "k": "写方案、汇报、管项目",
+            "v": "Claude Code，在对应的工作台开会话"
+          },
+          {
+            "k": "页面里只改一段",
+            "v": "Notion AI，就地改"
+          },
+          {
+            "k": "代码、原型、数据",
+            "v": "Claude Code 或 Codex"
+          },
+          {
+            "k": "外部账号、后台运行",
+            "v": "外派平台，经「派发任务卡」，只生成不发送"
+          },
+          {
+            "k": "验收",
+            "v": "看证据卡判断，不用读全文；外发、删除、对外承诺由你来按"
+          },
+          {
+            "k": "收尾",
+            "v": "Agent 可能问「要不要沉淀成工作模块或技能」，回「是」或「不用」"
+          }
         ]
       },
       {
-        id: "project", name: "开新项目", sub: "项目简报是唯一背景", ordered: true,
-        role: "换会话、换 Agent 时不贴聊天记录，先把结论写回项目简报。",
-        rows: [
-          { k: "先判断", v: "先判断是不是项目：用「推进项目」按立项标准判断，不够格的写成文档" },
-          { k: "项目简报", v: "项目简报是唯一的背景来源：目标、现行决定、待决问题、资料索引都写在里面" },
-          { k: "文件夹", v: "要写代码、长期多会话时才单独开文件夹；CLAUDE.md 只放项目简报链接、运行规则链接和硬边界" },
-          { k: "开场", v: "新会话开场说「读一下 X 项目简报」就够" }
+        "id": "say",
+        "name": "你说什么",
+        "sub": "口令表：你说 → Agent 做",
+        "role": "不用背，直接说目标也行；这些是常用的说法。",
+        "rows": [
+          {
+            "k": "「写周报」「写月报」",
+            "v": "先读上期汇报和项目简报，再问你补充，出草稿（W2）"
+          },
+          {
+            "k": "「记进 X 项目」",
+            "v": "列改动清单，你确认后写进项目简报（M04）"
+          },
+          {
+            "k": "「项目周检」",
+            "v": "列过期待决、临近里程碑和要你拍板的事（M09）",
+            "tag": "待建"
+          },
+          {
+            "k": "「我想做 X」",
+            "v": "起草方案 → 评审 → 立项 → 排期（W3）"
+          },
+          {
+            "k": "「把 X 做成 PPT / H5 / PDF」",
+            "v": "先确认呈现方式，再做成品（W4）"
+          },
+          {
+            "k": "「这次按 Mxx 做」",
+            "v": "按工作模块清单里这个模块的做法做"
+          },
+          {
+            "k": "「新增工作模块 X」",
+            "v": "在工作模块清单加一行，写模块页"
+          },
+          {
+            "k": "「Mxx 写成技能」",
+            "v": "用「创建 Notion 技能」写进技能库"
+          },
+          {
+            "k": "「周复盘」",
+            "v": "可选：列本周纠错、待升级、待沉淀，最多 3 个决定"
+          },
+          {
+            "k": "「更新系统地图」",
+            "v": "重新生成地图，列出变化，你同意后推送"
+          },
+          {
+            "k": "「验证接入」",
+            "v": "列出开场读过的页面和版本"
+          }
         ]
       },
       {
-        // 来源：工作场景做法卡｜草案 v0.1 第 0.1、0.3 节和 1.0 节；工作方法｜第一期运行规则 v1.3 第 0.1、0.2 节。Notion 没有单独一节，这里只摘要。
-        id: "use", name: "使用已有模块", sub: "只说目标，Agent 串模块",
-        role: "模块是一件能单独完成的事，工作流把几个模块串起来。你只说目标，Agent 按工作流调用模块，并在第一行说明这次走哪几步；选错了当场说。",
-        source: { name: "工作场景做法卡｜草案 · 第 0 节", url: "https://app.notion.com/p/413c7394815f817b9c87c20d640258be" },
-        rows: [
-          { k: "在哪开口", v: "默认在 Claude Code；写方案、汇报、管项目在对应工作台开会话，写代码、做原型在项目文件夹" },
-          { k: "记进项目", v: "随时说「记进 X 项目」，把会议、邮件、截图丢过来" },
-          { k: "项目周检", v: "每周说「项目周检」", tag: "待建" },
-          { k: "写汇报", v: "「写周报」「写月报」" },
-          { k: "从想法到项目", v: "「我想做 X」" },
-          { k: "做成品", v: "「把 X 做成 PPT / H5 / PDF」" },
-          { k: "研判与决策", v: "「帮我研判一下 X」「验证一下 X」" },
-          { k: "做产品原型", v: "「把 X 做成产品原型」" },
-          { k: "系统维护", v: "周五说「周复盘」" },
-          { k: "单独调用", v: "职场难题叫「纵横」；改文字直接说改什么；游戏想法叫「游戏方案编译器」" },
-          { k: "中途要改", v: "只改这一份就直接说；改主意、补信息照常说；违反规则会记一条纠错；方向大变就重新起草" },
-          { k: "验收", v: "看证据卡判断，不必读全文；外发、删除、对外承诺由你来按" },
-          { k: "哪些模块能用", v: "看「工作流全貌」：已有、部分、缺失和各自的技能", url: "?view=wf" }
+        "id": "project",
+        "name": "开新项目",
+        "sub": "项目简报是唯一背景",
+        "ordered": true,
+        "role": "换会话、换 Agent 时不贴聊天记录，先把结论写回项目简报。",
+        "rows": [
+          {
+            "k": "立项",
+            "v": "在对应的工作台开会话，说「帮我立项 X」"
+          },
+          {
+            "k": "文件夹",
+            "v": "Agent 建议开项目文件夹时，它会建好文件夹和 CLAUDE.md；之后在那个文件夹开新会话"
+          },
+          {
+            "k": "以后进项目",
+            "v": "在它的文件夹开会话；没有文件夹的，在工作台说「读一下 X 项目简报」"
+          }
         ]
       },
       {
-        // 来源：工作场景做法卡｜草案 v0.3 第 2.5 节（Tim 2026-11-10 确认写入）。
-        id: "module", name: "开启一个新模块", sub: "草案 · 一次打磨一个，先手工跑", ordered: true,
-        role: "按落地顺序一次打磨一个模块。「缺失」只表示没有技能：不用先建技能，先按临时做法卡用真实项目手工跑，跑稳了再决定要不要沉淀成技能。项目上的结论写进项目简报，做法上的改进回到做法卡草案。",
-        source: { name: "工作场景做法卡｜草案 · 2.5 开启一个新模块", url: "https://app.notion.com/p/413c7394815f817b9c87c20d640258be" },
-        rows: [
-          { k: "选模块和试跑对象", v: "按落地顺序选模块；挑一个手上正在做、正好缺这个模块产出的真实项目" },
-          { k: "选在哪开会话", v: "只读写 Notion 的在对应工作台；会产出本地文件的在项目文件夹" },
-          { k: "开场", v: "开新会话，贴下面的开场提示词、填好方括号。Agent 读模块定义和项目简报，写试跑卡；第 1 次先起草临时做法卡，等你确认" },
-          { k: "试跑", v: "你只回答缺口、确认产出、确认写入 Notion 的改动清单；Agent 按做法卡执行，交付附证据卡" },
-          { k: "收尾", v: "看「这次做法要改什么」；Agent 记一条试跑" },
-          { k: "带回", v: "在工作方法会话里说「更新 X 模块的做法卡」，Agent 更新做法卡，版本 +0.1" },
-          { k: "定型", v: "按验证类型达标后，决定写成独立技能还是并进现有技能；用「创建 Notion 技能」落地，改技能库要你同意" }
-        ],
-        codeTitle: "开场提示词（通用，填好方括号）",
-        copyLabel: "复制开场提示词",
-        code: "这个会话做一件事：[模块编号 模块名] 第 [N] 次试跑，试跑对象是 [项目名]。\n「工作场景做法卡｜草案」还是草案：这次是我明确要求按工作方法试跑，只限本会话按它的第 0 节和 2.5 执行。\n\n背景：\n- 模块定义和验证规则在「工作场景做法卡｜草案」第 0 节：https://app.notion.com/p/413c7394815f817b9c87c20d640258be\n- 试跑对象的项目简报：[链接]\n- 协作规则以「工作方法｜第一期运行规则」为准。\n\n先做：\n1. 读第 0 节里这个模块的定义（输入 → 输出、缺口、验证类型），再读项目简报。\n2. 写试跑卡：验证类型、这是第几次、看哪几个指标。\n3. 第 1 次：起草临时做法卡（步骤｜Agent 做什么｜我做什么｜产出），给我确认后再开始。第 2 次起：按本页 2.5 里这个模块最新的做法卡执行。\n\n执行中：先查后问，只问绕不开的缺口，一轮最多 3 问、每问附推荐答案，我回「是」就采纳；交付附证据卡；写 Notion 前先列改动清单（区块｜原来｜改成｜来源）等我确认。\n\n收尾：\n- 在「系统改进记录」记一条试跑：类型＝试跑，流程环节＝其他，标题以「[模块编号]」开头，关联技能＝[最接近的现有技能，没有就留空]，试跑结果只看做法要不要改（无需修改 / 小改 / 大改）。\n- 在聊天里列「这次做法要改什么」。\n\n边界：不新建技能，不改技能库、格式页和其他生效页面；项目内容写进项目简报，做法上的意见只在聊天里列给我。"
+        "id": "module",
+        "name": "新增或打磨工作模块",
+        "sub": "5 步，先手工跑",
+        "ordered": true,
+        "role": "一次打磨一个。第一批是 M08 规划拆解、M09 项目周检、M05 业务评审。",
+        "source": {
+          "name": "工作模块清单 · 第 4 节",
+          "url": "https://app.notion.com/414c7394815f815f8923d81424d50c85"
+        },
+        "rows": [
+          {
+            "k": "开口",
+            "v": "说「新增工作模块 X」，或者「这次按 Mxx 做」"
+          },
+          {
+            "k": "登记",
+            "v": "Agent 在清单加一行；没有现成技能的，建模块页写 3–6 步做法"
+          },
+          {
+            "k": "真用",
+            "v": "拿一件真实的工作来用，交付时附证据卡"
+          },
+          {
+            "k": "改做法",
+            "v": "收尾时问「这次做法要改吗？」，改了就改模块页"
+          },
+          {
+            "k": "写成技能",
+            "v": "用顺了说「Mxx 写成技能」，交给「创建 Notion 技能」"
+          }
+        ]
+      }
+    ]
+  },
+  "changes": {
+    "source": {
+      "name": "修订记录",
+      "url": "https://app.notion.com/e3919d7654ff4dd0a401cd4729c18df9"
+    },
+    "list": [
+      {
+        "date": "2026-11-10",
+        "title": "系统精简为确定版 v1",
+        "version": "工作守则 v2.0 · 工作模块清单 v1.0",
+        "url": "https://app.notion.com/414c7394815f812781a1fdfa0507120c",
+        "points": [
+          "开场只读工作守则和 Tim 偏好，其余按需读；Agent 操作指南改为写 Notion 前读",
+          "运行规则在原页改写为「工作守则」：加入架构，去掉试行和第二期标注、试跑与转正",
+          "工作模块总表改为「工作模块清单」并生效：18 个工作模块、W1–W4、第一批打磨 M08、M09、M05",
+          "新建「以后再说」和「修订记录」库；各页修订记录集中入库，页面只留一行链接",
+          "名词表、周复盘规程、工作模块试跑规程、工作模块与工作流草案、总架构改为停用（未删除）",
+          "三个技能删掉试跑记录条款，改为收尾问「要不要沉淀」；系统改进记录只记纠错"
+        ]
+      },
+      {
+        "date": "2026-11-10",
+        "title": "系统地图改为 4 个视图",
+        "version": "更新系统地图（技能）",
+        "url": "https://app.notion.com/414c7394815f8196b934ecab95f08376",
+        "points": [
+          "视图改为：架构、工作模块与工作流、开始使用、更新记录；去掉旧的「按场景」",
+          "「开始使用」改从「给 Tim：操作说明」生成，新增「你说什么」口令表",
+          "「更新记录」从 Notion 修订记录库生成"
+        ]
       }
     ]
   }

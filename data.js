@@ -9,12 +9,12 @@ window.SYSTEM_MAP = {
     "sources": [
       {
         "name": "工作守则",
-        "version": "v2.0",
+        "version": "v2.1",
         "url": "https://app.notion.com/p/413c7394815f8186a445d9ba7d5a7965"
       },
       {
         "name": "工作模块清单",
-        "version": "v1.0",
+        "version": "v1.1",
         "url": "https://app.notion.com/p/414c7394815f815f8923d81424d50c85"
       },
       {
@@ -29,7 +29,7 @@ window.SYSTEM_MAP = {
       },
       {
         "name": "知识中心",
-        "version": "16 页生效",
+        "version": "15 页生效",
         "url": "https://app.notion.com/p/400c7394815f81d181eef3c3c4764461"
       },
       {
@@ -146,7 +146,7 @@ window.SYSTEM_MAP = {
           "name": "工作守则",
           "items": [
             {
-              "t": "v2.0 · 生效 · 开场必读：架构、协作方法、纠错、收尾",
+              "t": "v2.1 · 生效 · 开场必读：架构、协作方法、纠错、收尾",
               "url": "https://app.notion.com/p/413c7394815f8186a445d9ba7d5a7965"
             }
           ]
@@ -173,7 +173,7 @@ window.SYSTEM_MAP = {
           "name": "工作模块清单",
           "items": [
             {
-              "t": "v1.0 · 生效 · 新增、打磨工作模块或按工作流做事时读",
+              "t": "v1.1 · 生效 · 新增、打磨工作模块或按工作流做事时读",
               "url": "https://app.notion.com/p/414c7394815f815f8923d81424d50c85"
             }
           ]
@@ -382,7 +382,7 @@ window.SYSTEM_MAP = {
               "url": "https://app.notion.com/p/28bbaa669cce40d19d474e8d7c45b81d"
             },
             {
-              "t": "工作流库（执行端）",
+              "t": "外派流程库（执行端）",
               "url": "https://app.notion.com/p/061b62c136d54595a8ffc19779d4fbb2"
             }
           ]
@@ -1169,6 +1169,27 @@ window.SYSTEM_MAP = {
       "url": "https://app.notion.com/p/e3919d7654ff4dd0a401cd4729c18df9"
     },
     "list": [
+      {
+        "date": "2026-11-10",
+        "title": "体检后修正：去重、改用引用、清理过时说法",
+        "version": "工作守则 v2.1 · 工作模块清单 v1.1 · 任务流转规则 v2.1",
+        "url": "https://app.notion.com/p/414c7394815f81b99593cd571580713e",
+        "points": [
+          "执行端的「工作流」库改名「外派流程」，和工作模块清单里的工作流 W1–W4 区分开",
+          "同一件事只留一处：偏好规则、正本清单、工作模块和工作流的定义、沉淀条件各留一处，别处只放链接",
+          "页面、库、技能的名字改用 Notion 引用，原页改名会自动同步；页首提示框不再写版本号",
+          "清理过时说法：指向停用页的链接、旧称呼、旧字段说明"
+        ]
+      },
+      {
+        "date": "2026-11-10",
+        "title": "更新系统地图：自检加链接格式检查",
+        "version": "更新系统地图（技能）",
+        "url": "https://app.notion.com/p/414c7394815f8130b679d9beaa1e1ee7",
+        "points": [
+          "Notion 链接必须写成带 /p/ 的格式，并逐个确认能打开"
+        ]
+      },
       {
         "date": "2026-11-10",
         "title": "系统精简为确定版 v1",

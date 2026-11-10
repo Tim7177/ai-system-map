@@ -401,7 +401,7 @@ let theme = document.documentElement.dataset.theme;
 let mode = null, step = 0, sel = null, showDraft = false, firstPaint = true;
 const qView = new URLSearchParams(location.search).get("view");
 let view = qView === "scene" && M.scenarios ? "scene" : qView === "wf" && M.workflows ? "wf" : qView === "start" && M.start ? "start" : "map", sc = 0, scStep = 0, scSkill = null;   // view: map 看结构 / scene 按场景 / wf 工作流全貌 / start 开始使用
-let sti = 0;   // 开始使用：当前卡片序号
+let sti = M.start ? Math.max(0, M.start.cards.findIndex(c => c.id === new URLSearchParams(location.search).get("card"))) : 0;   // 开始使用：当前卡片序号，可用 ?view=start&card=<id> 直达
 let wfi = 0, wfMod = null;   // 工作流全貌：当前卡片序号、选中的模块编号
 
 const $ = id => document.getElementById(id);
@@ -811,8 +811,9 @@ function renderStartPanel(p) {
     c.rows.map((r, k) => '<div class="step"><span class="ly">' + (c.ordered ? (k + 1) + " · " : "") + esc(r.k) + '</span><span class="sb"><span>' +
       (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.v) + " ↗</a>" : esc(r.v)) +
       (r.tag ? ' <span class="tag' + (WARN_TAGS.includes(r.tag) ? " w" : " ok") + '">' + esc(r.tag) + "</span>" : "") + "</span></span></div>").join("");
-  if (c.code) h += '<p class="sec">' + esc(c.codeTitle) + '</p><pre class="snip">' + esc(c.code) + '</pre><button class="btn" id="cp">复制这三行</button>';
-  h += '<div class="rel"><b>详细说明</b><a href="' + esc(S.source.url) + '" target="_blank" rel="noopener">' + esc(S.source.name) + " ↗</a></div>";
+  if (c.code) h += '<p class="sec">' + esc(c.codeTitle) + '</p><pre class="snip">' + esc(c.code) + '</pre><button class="btn" id="cp">' + esc(c.copyLabel || "复制这三行") + '</button>';
+  const src = c.source || S.source;
+  h += '<div class="rel"><b>详细说明</b><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.name) + " ↗</a></div>";
   h += '<p class="foot">' + esc(S.intro) + "本页只放概要，以 Notion 为准；上下方向键换卡片。</p>";
   p.innerHTML = h;
   if (c.code) $("cp").onclick = () => navigator.clipboard.writeText(c.code).then(() => { $("cp").textContent = "已复制"; }, () => { $("cp").textContent = "复制失败，请手动选中上面的文字"; });

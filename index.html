@@ -402,6 +402,7 @@ let mode = null, step = 0, sel = null, showDraft = false, firstPaint = true;
 const qView = new URLSearchParams(location.search).get("view");
 let view = qView === "scene" && M.scenarios ? "scene" : qView === "wf" && M.workflows ? "wf" : qView === "start" && M.start ? "start" : qView === "log" && M.changes ? "log" : "map", sc = 0, scStep = 0, scSkill = null;   // view: map 架构 / scene 按场景（旧，数据里没有就不显示）/ wf 工作模块与工作流 / start 开始使用 / log 更新记录
 let sti = M.start ? Math.max(0, M.start.cards.findIndex(c => c.id === new URLSearchParams(location.search).get("card"))) : 0;   // 开始使用：当前卡片序号，可用 ?view=start&card=<id> 直达
+let stu = null;   // 开始使用第 3 步的选中项：{w:"W1"} 工作流 / {t:"提案"} 工作类型 / {m:"M02", from} 工作模块
 let wfi = 0, wfMod = null;   // 工作模块与工作流：当前卡片序号、选中的模块编号
 let lgi = 0;   // 更新记录：当前卡片序号
 
@@ -588,8 +589,8 @@ document.addEventListener("keydown", e => {
   if (view === "start") {
     if (!$("themeList").hidden) return;
     const n = M.start.cards.length;
-    if (e.key === "ArrowDown") { e.preventDefault(); sti = (sti + 1) % n; draw(); }
-    if (e.key === "ArrowUp") { e.preventDefault(); sti = (sti - 1 + n) % n; draw(); }
+    if (e.key === "ArrowDown") { e.preventDefault(); sti = (sti + 1) % n; stu = null; draw(); }
+    if (e.key === "ArrowUp") { e.preventDefault(); sti = (sti - 1 + n) % n; stu = null; draw(); }
     return;
   }
   if (view === "log") {
@@ -619,7 +620,7 @@ document.addEventListener("keydown", e => {
   if (e.key === "ArrowRight") go(1);
   if (e.key === "ArrowLeft") go(-1);
 });
-window.addEventListener("resize", () => placeProbe(view === "log" ? "lg-" + lgi : view === "start" ? "st-" + M.start.cards[sti].id : view === "wf" ? (wfMod ? null : "wf-" + wfi) : view === "scene" ? "sc-" + M.scenarios[sc].id : mode !== null ? M.flows[mode].steps[step].layer : null));
+window.addEventListener("resize", () => placeProbe(view === "log" ? "lg-" + lgi : view === "start" ? (stu ? null : "st-" + M.start.cards[sti].id) : view === "wf" ? (wfMod ? null : "wf-" + wfi) : view === "scene" ? "sc-" + M.scenarios[sc].id : mode !== null ? M.flows[mode].steps[step].layer : null));
 
 /* ---------- 按场景 ---------- */
 const skillLink = n => {
@@ -789,41 +790,109 @@ function renderWfPanel(p) {
 }
 
 /* ---------- 开始使用 ---------- */
+const stTypes = () => [...new Set(M.modules.map(m => m.group))];
+// 每张卡左侧的小块：1、2 是步骤行；3A 是工作流；3B 是工作类型
+function stChips(c) {
+  if (c.id === "wf") return M.workflows.map(w => ({ label: w.id + " " + w.name, sel: { w: w.id }, draft: w.chain.some(x => modById(x.m).status === "待建") }));
+  if (c.id === "type") return stTypes().map(g => ({ label: g + " · " + M.modules.filter(m => m.group === g).length, sel: { t: g } }));
+  return c.rows.map((r, j) => ({ label: (c.ordered ? (j + 1) + " " : "") + r.k, draft: WARN_TAGS.includes(r.tag) }));
+}
+const stSame = (a, b) => !!a && !!b && a.w === b.w && a.t === b.t && !a.m && !b.m;
 function renderStart() {
   const box = $("layers"); box.innerHTML = "";
   const cs = M.start.cards;
   cs.forEach((c, i) => {
     const d = document.createElement("section");
-    d.className = "deck" + (i === sti ? " hi" : "") + (firstPaint ? "" : " settled");
+    d.className = "deck" + (i === sti && !stu ? " hi" : "") + (firstPaint ? "" : " settled");
     d.dataset.layer = "st-" + c.id;
     if (firstPaint) d.style.animationDelay = (i * 0.1) + "s";
-    d.innerHTML = '<div><div class="idx">' + t().idx(i, cs.length) + '</div><button class="ln"><b>' + esc(c.name) + "</b><span>" + esc(c.sub) + '</span></button></div><div class="chips"></div>';
-    d.querySelector(".ln").onclick = () => { sti = i; draw(); };
+    d.innerHTML = '<div><div class="idx">' + (c.idx ? (theme === "ink" ? "第" + esc(c.idx) + "步" : "STEP " + esc(c.idx)) : t().idx(i, cs.length)) + '</div><button class="ln"><b>' + esc(c.name) + "</b><span>" + esc(c.sub) + '</span></button></div><div class="chips"></div>';
+    d.querySelector(".ln").onclick = () => { sti = i; stu = null; draw(); };
     const chips = d.querySelector(".chips");
-    c.rows.forEach((r, j) => {
+    stChips(c).forEach((x, j) => {
       const b = document.createElement("button");
-      b.className = "chip" + (firstPaint ? "" : " settled") + (WARN_TAGS.includes(r.tag) ? " draft" : "");
-      b.textContent = (c.ordered ? (j + 1) + " " : "") + r.k;
+      b.className = "chip" + (firstPaint ? "" : " settled") + (x.draft ? " draft" : "") + (i === sti && stSame(stu, x.sel) ? " sel" : "");
+      b.textContent = x.label;
       if (firstPaint) b.style.animationDelay = (0.3 + i * 0.1 + j * 0.05) + "s";
-      b.onclick = () => { sti = i; draw(); };
+      b.onclick = () => { sti = i; stu = x.sel || null; draw(); };
       chips.appendChild(b);
     });
     box.appendChild(d);
   });
-  placeProbe("st-" + cs[sti].id);
+  placeProbe(stu ? null : "st-" + cs[sti].id);
+}
+// 一张用法卡：在哪做 / 你说 / 你准备 / 你拿到 / 你要做
+// 「现状」不手写，按工作模块清单第 2 节的形态算出来：待建 → 临场做；手工版 → 按模块页做
+const STATE_NOTE = { "待建": "待建，现在由 Agent 临场做", "手工版": "手工版，按模块页的做法做" };
+const modNote = m => STATE_NOTE[m.status] ? m.id + " " + m.name + "：" + STATE_NOTE[m.status] : "";
+function useRows(u, note) {
+  return [["在哪做", u.where], ["你说", u.say], ["你准备", u.prep], ["你拿到", u.get], ["你要做", u.todo]]
+    .map(([k, v]) => '<div class="step"><span class="ly">' + k + '</span><span class="sb"><span>' + esc(v) + "</span></span></div>").join("") +
+    (note ? '<div class="rel"><b>现状</b>' + esc(note) + "</div>" : "");
+}
+function stGeneral() {
+  return '<p class="sec">在哪做：速查</p>' + itemsHtml(M.start.general.map(r => '<div class="it"><span>' + esc(r.k) + '</span><span class="tag">' + esc(r.v) + "</span></div>"));
 }
 function renderStartPanel(p) {
   const S = M.start, c = S.cards[sti];
-  let h = '<p class="crumb">开始使用 · ' + (sti + 1) + " / " + S.cards.length + '</p><p class="pt">' + esc(c.name) + '</p><p class="role">' + esc(c.role) + "</p>" +
-    c.rows.map((r, k) => '<div class="step"><span class="ly">' + (c.ordered ? (k + 1) + " · " : "") + esc(r.k) + '</span><span class="sb"><span>' +
+  const sample = S.sample ? ' <span class="tag w">样稿</span>' : "";
+  const src = c.source || S.source;
+  const foot = '<div class="rel"><b>详细说明</b><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.name) + " ↗</a></div>" +
+    '<p class="foot">' + esc(S.intro) + "本页只放概要，以 Notion 为准；上下方向键换步骤。</p>";
+  const crumb = (label, back) => '<p class="crumb">' + (back ? '<button id="up">' + esc(label) + "</button> / " + back : esc(label)) + sample + "</p>";
+  let h;
+  if (stu && stu.m) {   // 工作模块的用法卡
+    const m = modById(stu.m), u = S.modUse[m.id] || {};
+    const from = stu.from && stu.from.w ? stu.from.w + " · " + M.workflows.find(w => w.id === stu.from.w).name : m.group;
+    const used = M.workflows.filter(w => w.chain.some(x => x.m === m.id));
+    h = crumb(from, "工作模块") + '<p class="pt">' + m.id + " · " + esc(m.name) + " " + stTag(m.status) + '</p><p class="role">' + esc(m.io) + "</p>" + useRows(u, modNote(m)) +
+      itemsHtml([
+        '<div class="it"><span>工作类型</span><span class="tag">' + esc(m.group) + "</span></div>",
+        '<div class="it"><span>用到的技能</span><span class="sks">' + (m.skills.length ? m.skills.map(skillLink).join("") : '<span class="tag bad">无</span>') + "</span></div>",
+        '<div class="it"><span>串在这些工作流里</span><span class="sks">' + (used.length ? used.map(w => '<button class="sk" data-w="' + w.id + '">' + w.id + " " + esc(w.name) + "</button>").join("") : '<span class="tag">单独用</span>') + "</span></div>"
+      ]) + foot;
+    p.innerHTML = h;
+    $("up").onclick = () => { stu = stu.from || { t: m.group }; draw(); };
+    p.querySelectorAll("[data-sk]").forEach(b => b.onclick = () => openSkill(b.dataset.sk));
+    p.querySelectorAll("[data-w]").forEach(b => b.onclick = () => { sti = S.cards.findIndex(x => x.id === "wf"); stu = { w: b.dataset.w }; draw(); });
+    return;
+  }
+  if (stu && stu.w) {   // 工作流的用法卡
+    const w = M.workflows.find(x => x.id === stu.w), u = S.wfUse[w.id] || {};
+    h = crumb(c.name, w.id) + '<p class="pt">' + w.id + " · " + esc(w.name) + '</p><p class="role">' + esc(w.goal) + "</p>" + useRows(u, [...new Set(w.chain.map(x => x.m))].map(id => modNote(modById(id))).filter(Boolean).join("；")) +
+      '<p class="sec">按顺序走这些工作模块（点开看单独怎么用）</p>' +
+      w.chain.map((x, k) => { const m = modById(x.m); return '<div class="step" data-m="' + m.id + '"><span class="ly">' + (k + 1) + " · " + m.id + '</span><span class="sb"><span class="who"><em>工作模块</em>' + esc(m.name) + " " + stTag(m.status) + (x.opt ? ' <span class="tag">可选</span>' : x.alt ? ' <span class="tag">三选一</span>' : "") + "</span></span></div>"; }).join("") + foot;
+    p.innerHTML = h;
+    $("up").onclick = () => { stu = null; draw(); };
+    p.querySelectorAll("[data-m]").forEach(el => el.onclick = () => { stu = { m: el.dataset.m, from: { w: w.id } }; draw(); });
+    return;
+  }
+  if (stu && stu.t) {   // 一个工作类型下的工作模块
+    const ms = M.modules.filter(m => m.group === stu.t);
+    h = crumb(c.name, "工作类型") + '<p class="pt">' + esc(stu.t) + '</p><p class="role">' + ms.length + " 个工作模块，点开看用法。</p>" +
+      ms.map(m => { const u = S.modUse[m.id] || {}; return '<div class="step" data-m="' + m.id + '"><span class="ly">' + m.id + '</span><span class="sb"><span class="who"><em>' + esc(m.name) + "</em>" + stTag(m.status) + '</span><span class="who"><em>你说</em>' + esc(u.say || "") + '</span><span class="who"><em>在哪做</em>' + esc(u.where || "") + "</span></span></div>"; }).join("") + foot;
+    p.innerHTML = h;
+    $("up").onclick = () => { stu = null; draw(); };
+    p.querySelectorAll("[data-m]").forEach(el => el.onclick = () => { stu = { m: el.dataset.m, from: { t: stu.t } }; draw(); });
+    return;
+  }
+  h = crumb("开始使用 · 第 " + (c.idx || sti + 1) + " 步") + '<p class="pt">' + esc(c.name) + '</p><p class="role">' + esc(c.role) + "</p>";
+  if (c.id === "wf") {
+    h += M.workflows.map(w => '<div class="step" data-w="' + w.id + '"><span class="ly">' + w.id + '</span><span class="sb"><span class="who"><em>' + esc(w.name) + "</em>" + esc(w.goal) + '</span><span class="who"><em>你说</em>' + esc((S.wfUse[w.id] || {}).say || w.cmd) + "</span></span></div>").join("") + stGeneral();
+  } else if (c.id === "type") {
+    h += stTypes().map(g => '<div class="step" data-t="' + esc(g) + '"><span class="ly">' + esc(g) + '</span><span class="sb"><span class="sks">' + M.modules.filter(m => m.group === g).map(m => '<button class="sk" data-m="' + m.id + '">' + esc(m.name) + "</button>").join("") + "</span></span></div>").join("") + stGeneral();
+  } else {
+    h += c.rows.map((r, k) => '<div class="step"><span class="ly">' + (c.ordered ? (k + 1) + " · " : "") + esc(r.k) + '</span><span class="sb"><span>' +
       (r.url ? '<a href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.v) + " ↗</a>" : esc(r.v)) +
       (r.tag ? ' <span class="tag' + (WARN_TAGS.includes(r.tag) ? " w" : " ok") + '">' + esc(r.tag) + "</span>" : "") + "</span></span></div>").join("");
-  if (c.code) h += '<p class="sec">' + esc(c.codeTitle) + '</p><pre class="snip">' + esc(c.code) + '</pre><button class="btn" id="cp">' + esc(c.copyLabel || "复制这三行") + '</button>';
-  const src = c.source || S.source;
-  h += '<div class="rel"><b>详细说明</b><a href="' + esc(src.url) + '" target="_blank" rel="noopener">' + esc(src.name) + " ↗</a></div>";
-  h += '<p class="foot">' + esc(S.intro) + "本页只放概要，以 Notion 为准；上下方向键换卡片。</p>";
-  p.innerHTML = h;
+    if (c.code) h += '<p class="sec">' + esc(c.codeTitle) + '</p><pre class="snip">' + esc(c.code) + '</pre><button class="btn" id="cp">' + esc(c.copyLabel || "复制这三行") + '</button>';
+    if (c.after) h += itemsHtml(c.after.map(r => '<div class="it"><span><b>' + esc(r.k) + "</b>　" + esc(r.v) + "</span></div>"));
+  }
+  p.innerHTML = h + foot;
   if (c.code) $("cp").onclick = () => navigator.clipboard.writeText(c.code).then(() => { $("cp").textContent = "已复制"; }, () => { $("cp").textContent = "复制失败，请手动选中上面的文字"; });
+  p.querySelectorAll("[data-w]").forEach(el => el.onclick = () => { stu = { w: el.dataset.w }; draw(); });
+  p.querySelectorAll("[data-t]").forEach(el => el.onclick = e => { if (e.target.closest("[data-m]")) return; stu = { t: el.dataset.t }; draw(); });
+  p.querySelectorAll("[data-m]").forEach(el => el.onclick = e => { e.stopPropagation(); stu = { m: el.dataset.m, from: { t: modById(el.dataset.m).group } }; draw(); });
 }
 
 /* ---------- 更新记录 ---------- */
